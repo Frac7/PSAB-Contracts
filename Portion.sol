@@ -38,7 +38,7 @@ contract Portion is ERC721 {
     
     Storage private dataStorage;
     
-    constructor (address _dataStorage) public {
+    constructor (string memory name, string memory symbol, address _dataStorage) public ERC721 (name, symbol) {
         dataStorage = Storage(_dataStorage);
     }
     
@@ -52,7 +52,7 @@ contract Portion is ERC721 {
         _;
     }
     
-    function register(uint256 _landId, bytes32[] calldata _data) external {
+    function register(uint256 _landId, bytes32 _data) external {
         
         //TODO: test these lines
         TermsOfSale memory terms;

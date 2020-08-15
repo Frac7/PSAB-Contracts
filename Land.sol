@@ -28,7 +28,7 @@ contract Land is ERC721 {
     
     //the constructor is called once before the deploy to the blockchain
     //the Storage contract must be on the blockchain before the deploy of this contract
-    constructor (address _dataStorage) public {
+    constructor (string memory name, string memory symbol, address _dataStorage) public ERC721 (name, symbol) {
         dataStorage = Storage(_dataStorage);
     }
     
@@ -38,16 +38,16 @@ contract Land is ERC721 {
         _;
     }
     
-    function register(bytes32[] calldata _data) external {
+    function register(bytes32 _data) external {
         owners[msg.sender].landsOwned.push(lastLandId + 1);
         dataStorage.add(_data);
         lastLandId++;
     }
     
-    function divide(uint256 _landId, uint256 _portions, bytes32[] calldata _data) external onlyOwner(_landId) {
+    function divide(uint256 _landId, uint256 _portions, bytes32 _data) external onlyOwner(_landId) {
         //TODO: is the land divisible once or multiple times? for now, it is once
         for (uint256 i = 0; i < _portions; i++) {
-            Portion portion = new Portion(address(dataStorage));
+            Portion portion = new Portion('Portion', 'Portion', address(dataStorage));
             portion.register(_landId, _data);
         }
     }
