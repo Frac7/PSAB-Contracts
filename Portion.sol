@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.7.0;
+pragma solidity ^0.6.0;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/math/SafeMath.sol';
+
+import './Storage.sol';
 
 contract Portion is ERC721 {
     using SafeMath for uint256;
@@ -46,11 +48,11 @@ contract Portion is ERC721 {
     }
     
     modifier onlyOwnerAndBuyer(uint256 _portionId) {
-        require(ortions[_portionId].owner == msg.sender || portions[_portionId].buyer == msg.sender);
+        require(portions[_portionId].owner == msg.sender || portions[_portionId].buyer == msg.sender);
         _;
     }
     
-    function register(uint256 _landId, bytes32[] data) {
+    function register(uint256 _landId, bytes32[] calldata _data) external {
         
         //TODO: test these lines
         TermsOfSale memory terms;
@@ -58,7 +60,7 @@ contract Portion is ERC721 {
         terms.owner = msg.sender;
         
         portions[lastPortionId + 1] = terms;
-        dataStorage.add(data);
+        dataStorage.add(_data);
         lastPortionId++;
     }
     
@@ -66,26 +68,24 @@ contract Portion is ERC721 {
         uint256 _portionId,
         uint256 _price,
         uint256 _duration,
-        string _expectedProduction,
-        string _periodicity,
+        string calldata _expectedProduction,
+        string calldata _periodicity,
         uint256 _expectedMaintenanceCost,
         uint256 _expectedProdActivityCost
-    ) external onlyOwner {
-        portions[_portionId] = TermsOfSale({ 
-            price: _price, 
-            duration: _duration, 
-            expectedProduction: _expectedProduction,
-            periodicity: _periodicity,
-            expectedMaintenanceCost: _expectedMaintenanceCost,
-            expectedProdActivityCost: _expectedProdActivityCost
-        });
+    ) external onlyOwner(_portionId) {
+        TermsOfSale memory terms;
+        terms.price = _price;
+        terms.duration = _duration;
+        terms.expectedProduction = _expectedProduction;
+        terms.periodicity = _periodicity;
+        terms.expectedMaintenanceCost = _expectedMaintenanceCost;
+        terms.expectedProdActivityCost = _expectedProdActivityCost;
+
+        portions[_portionId] = terms;
     }
     
-    function sell(uint256 _portionId, address buyer) external onlyOwnerAndBuyer { //sell and transfer ownership
-        try portions[_portionId].buyer = buyer {}
-        catch Error(string memory error) {
-            return error;
-        }
+    function sell(uint256 _portionId, address _buyer) external onlyOwnerAndBuyer(_portionId) { //sell and transfer ownership
+        portions[_portionId].buyer = _buyer; //TODO: improve
     }
     
     //TODO: which information need to be saved?
