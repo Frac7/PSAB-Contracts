@@ -2,8 +2,8 @@
 
 pragma solidity ^0.6.0;
 
-import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
-import '@openzeppelin/contracts/math/SafeMath.sol';
+import '../../OpenZeppelin/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol';
+import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 import './Storage.sol';
 import './Portion.sol';
 
@@ -44,11 +44,8 @@ contract Land is ERC721 {
         lastLandId++;
     }
     
-    function divide(uint256 _landId, uint256 _portions, bytes32 _data) external onlyOwner(_landId) {
-        //TODO: is the land divisible once or multiple times? for now, it is once
-        for (uint256 i = 0; i < _portions; i++) {
-            Portion portion = new Portion('Portion', 'Portion', address(dataStorage));
-            portion.register(_landId, _data);
-        }
+    function divide(uint256 _landId, bytes32 _data) external onlyOwner(_landId) {
+        Portion portion = new Portion('Portion', 'Portion', address(dataStorage));
+        portion.register(_landId, _data);
     }
 }
