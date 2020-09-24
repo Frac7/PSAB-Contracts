@@ -52,6 +52,10 @@ contract Land is ERC721 {
         lastLandId++;
     }
     
+    function divide(uint256 _id, string calldata _description, bytes32 _data, address contractAddress) external onlyOwner(_id) {
+        Portion(contractAddress).register(_id, _description, _data);
+    }
+    
     function getById(uint256 _id) external view returns (Data memory) {
         return lands[_id];
     }
