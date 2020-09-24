@@ -13,12 +13,18 @@ import './Portion.sol';
 contract Land is ERC721 {
     using SafeMath for uint256;
     
+    //land data
+    struct Data {
+        string description;
+    }
+    
     //owner data
     struct Owner {
         uint256[] landsOwned; //ids of owner's lands
     }
     
     //state variables of this contract
+    mapping (uint256 => Data) private lands;
     mapping (address => Owner) private owners;
     //given the owner's address as the key, the value is the strcut of type owner
     //in this way, given an address, the list of his/her lands can be retrieve
@@ -38,14 +44,10 @@ contract Land is ERC721 {
         _;
     }
     
-    function register(bytes32 _data) external {
-        owners[msg.sender].landsOwned.push(lastLandId + 1);
+    function register(string calldata _description, bytes32 _data) external {
+        owners[msg.sender].landsOwned.push(lastLandId);
+        lands[lastLandId].description = _description;
         dataStorage.add(_data);
         lastLandId++;
-    }
-    
-    function divide(uint256 _landId, bytes32 _data) external onlyOwner(_landId) {
-        Portion portion = new Portion('Portion', 'Portion', address(dataStorage));
-        portion.register(_landId, _data);
     }
 }
