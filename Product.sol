@@ -12,10 +12,15 @@ contract Product {
         string description;
         uint256 portion;
         address registerdBy;
+        address certifiedBy;
     }
     
     struct Operator {
         uint256[] productsRegistered;
+    }
+    
+    struct Certifier {
+        uint256[] productsCertified;
     }
     
     struct Portion {
@@ -24,6 +29,7 @@ contract Product {
     
     mapping (uint256 => Data) private products;
     mapping (address => Operator) private operators;
+    mapping (address => Certifier) private Certifiers;
     mapping (uint256 => Portion) private portions;
     
     uint256 lastProductId;
@@ -44,6 +50,10 @@ contract Product {
         portions[_id].products.push(lastProductId);
         
         lastProductId++;
+    }
+    
+    function certify(uint256 _id) external {
+        products[_id].certifiedBy = msg.sender;
     }
     
     function getById(uint256 _id) external view returns (Data memory) {
