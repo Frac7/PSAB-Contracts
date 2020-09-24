@@ -29,7 +29,7 @@ contract Product {
     
     mapping (uint256 => Data) private products;
     mapping (address => Operator) private operators;
-    mapping (address => Certifier) private Certifiers;
+    mapping (address => Certifier) private certifiers;
     mapping (uint256 => Portion) private portions;
     
     uint256 lastProductId;
@@ -54,6 +54,7 @@ contract Product {
     
     function certify(uint256 _id) external {
         products[_id].certifiedBy = msg.sender;
+        certifiers[msg.sender].productsCertified.push(_id);
     }
     
     function getById(uint256 _id) external view returns (Data memory) {
