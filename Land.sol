@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.6.0;
+pragma experimental ABIEncoderV2;
 
 import '../../OpenZeppelin/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol';
 import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
@@ -49,5 +50,17 @@ contract Land is ERC721 {
         lands[lastLandId].description = _description;
         dataStorage.add(_data);
         lastLandId++;
+    }
+    
+    function getById(uint256 _id) external view returns (Data memory) {
+        return lands[_id];
+    }
+    
+    function getByOwner(address _address) external view returns (Owner memory) {
+        return owners[_address];
+    }
+    
+    function getOwnerByLand(uint256 _id) external view returns (address) {
+        return ownersByLandId[_id];
     }
 }
