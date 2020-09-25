@@ -52,4 +52,8 @@ contract Maintenance {
     function getByPortion(uint256 _id) external view returns (Portion memory) {
         return portions[_id];
     }
+    
+    function getTotalMaintenances() external view returns (uint256) {
+        return lastMaintenanceId;
+    }
 }
