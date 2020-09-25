@@ -13,6 +13,7 @@ contract Portion is ERC721 {
     
     struct Data {
         string description;
+        bytes32[] documents;
     }
     
     struct Owner {
@@ -58,15 +59,18 @@ contract Portion is ERC721 {
         _;
     }
     
-    function register(uint256 _landId, string calldata _description, bytes32 _data) external {
+    function register(uint256 _landId, string calldata _description, bytes32[] calldata _documents, bytes32 _data) external {
         portions[lastPortionId].description = _description;
+        portions[lastPortionId].documents = _documents;
         
         TermsOfSale memory terms;
         terms.landId = _landId;
         terms.owner = msg.sender;
         
         portionTerms[lastPortionId] = terms;
+        
         dataStorage.add(_data);
+        
         lastPortionId++;
     }
     
@@ -104,6 +108,10 @@ contract Portion is ERC721 {
     
     function getByBuyer(address _buyer) external view returns (Buyer memory) {
         return buyers[_buyer];
+    }
+    
+    function getTotalPortions() external view returns (uint256) {
+        return lastPortionId;
     }
     
 }
