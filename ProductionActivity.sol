@@ -7,12 +7,17 @@ import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 
 contract ProductionActivity {
     using SafeMath for uint256;
+    
+    struct Certification {
+        string description;
+        address certifier;
+    }
 
     struct Data {
         string description;
         uint256 portion;
         address registerdBy;
-        address certifiedBy;
+        Certification certification;
     }
     
     struct Operator {
@@ -47,8 +52,12 @@ contract ProductionActivity {
         lastActivityId++;
     }
     
-    function certify(uint256 _id) external {
-        activities[_id].certifiedBy = msg.sender;
+    function certify(uint256 _id, string calldata _description) external {
+        Certification memory certification;
+        certification.description = _description;
+        certification.certifier = msg.sender;
+        
+        activities[_id].certification = certification;
         certifiers[msg.sender].activitiesCertified.push(_id);
     }
     
@@ -62,5 +71,9 @@ contract ProductionActivity {
     
     function getByPortion(uint256 _id) external view returns (Portion memory) {
         return portions[_id];
+    }
+    
+    function getTotalProdActivities() external view returns (uint256) {
+        return lastActivityId;
     }
 }
