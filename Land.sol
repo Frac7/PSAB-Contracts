@@ -17,6 +17,7 @@ contract Land is ERC721 {
     //land data
     struct Data {
         string description;
+        bytes32[] documents;
     }
     
     //owner data
@@ -45,10 +46,14 @@ contract Land is ERC721 {
         _;
     }
     
-    function register(string calldata _description, bytes32 _data) external {
+    function register(string calldata _description, bytes32[] calldata _documents, bytes32 _data) external {
         owners[msg.sender].landsOwned.push(lastLandId);
+        
         lands[lastLandId].description = _description;
+        lands[lastLandId].documents = _documents;
+        
         dataStorage.add(_data);
+        
         lastLandId++;
     }
     
@@ -66,5 +71,9 @@ contract Land is ERC721 {
     
     function getOwnerByLand(uint256 _id) external view returns (address) {
         return ownersByLandId[_id];
+    }
+    
+    function getTotalLands() external view returns (uint256) {
+        return lastLandId;
     }
 }
