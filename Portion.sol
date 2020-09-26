@@ -14,6 +14,7 @@ contract Portion is ERC721 {
     struct Data {
         string description;
         bytes32[] documents;
+        uint256 hashId;
     }
     
     struct Owner {
@@ -69,7 +70,7 @@ contract Portion is ERC721 {
         
         portionTerms[lastPortionId] = terms;
         
-        dataStorage.add(_documents);
+        portions[lastPortionId].hashId = dataStorage.add(_documents);
         
         lastPortionId++;
     }
