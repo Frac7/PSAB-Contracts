@@ -17,7 +17,7 @@ contract ProductionActivity {
         string description;
         uint256 portion;
         address registerdBy;
-        Certification certification;
+        Certification[] certifications;
     }
     
     struct Operator {
@@ -57,7 +57,7 @@ contract ProductionActivity {
         certification.description = _description;
         certification.certifier = msg.sender;
         
-        activities[_id].certification = certification;
+        activities[_id].certifications.push(certification);
         certifiers[msg.sender].activitiesCertified.push(_id);
     }
     
