@@ -69,6 +69,10 @@ contract ProductionActivity {
         return operators[_address];
     }
     
+    function getByCertifier(address _address) external view returns (Certifier memory) {
+        return certifiers[_address];
+    }
+    
     function getByPortion(uint256 _id) external view returns (Portion memory) {
         return portions[_id];
     }
