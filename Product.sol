@@ -38,11 +38,6 @@ contract Product {
     mapping (uint256 => Portion) private portions;
     
     uint256 lastProductId;
-    
-    modifier onlyOperator(uint256 _productId) {
-        require(products[_productId].registerdBy == msg.sender);
-        _;
-    }
 
     function register(string calldata _description, uint256 _id) external {
         products[lastProductId].description = _description;
