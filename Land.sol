@@ -46,19 +46,19 @@ contract Land is ERC721 {
         _;
     }
     
-    function register(string calldata _description, bytes32[] calldata _documents, bytes32 _data) external {
+    function register(string calldata _description, bytes32[] calldata _documents) external {
         owners[msg.sender].landsOwned.push(lastLandId);
         
         lands[lastLandId].description = _description;
         lands[lastLandId].documents = _documents;
         
-        dataStorage.add(_data);
+        dataStorage.add(_documents);
         
         lastLandId++;
     }
     
-    function divide(uint256 _id, string calldata _description, bytes32 _data, address contractAddress) external onlyOwner(_id) {
-        Portion(contractAddress).register(_id, _description, _data);
+    function divide(uint256 _id, string calldata _description, bytes32[] calldata _documents, address contractAddress) external onlyOwner(_id) {
+        Portion(contractAddress).register(_id, _description, _documents);
     }
     
     function getById(uint256 _id) external view returns (Data memory) {
