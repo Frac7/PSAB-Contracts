@@ -18,6 +18,7 @@ contract Land is ERC721 {
     struct Data {
         string description;
         bytes32[] documents;
+        uint256 hashId;
     }
     
     //owner data
@@ -52,7 +53,7 @@ contract Land is ERC721 {
         lands[lastLandId].description = _description;
         lands[lastLandId].documents = _documents;
         
-        dataStorage.add(_documents);
+        lands[lastLandId].hashId = dataStorage.add(_documents);
         
         lastLandId++;
     }
