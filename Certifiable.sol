@@ -11,6 +11,7 @@ contract Certifiable {
     struct Certification {
         string description;
         address certifier;
+        uint256 item;
     }
     
     uint256 private lastCertificationId;
@@ -21,6 +22,7 @@ contract Certifiable {
     function certify(uint256 _id, string calldata _description) external virtual {
         certifications[lastCertificationId].description = _description;
         certifications[lastCertificationId].certifier = msg.sender;
+        certifications[lastCertificationId].item = _id;
         
         certificationsByCertifiers[msg.sender].push(_id);
         
