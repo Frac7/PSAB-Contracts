@@ -55,12 +55,12 @@ contract Land is ERC721 {
     }
     
     function divide(uint256 _id, string calldata _description, bytes32[] calldata _documents, address contractAddress) external onlyOwner(_id) {
-        if (!lands[_id].hasValue) revert('Element does not exists');
+        if (!lands[_id].hasValue) revert('Element does not exist');
         Portion(contractAddress).register(_id, _description, _documents);
     }
     
     function getById(uint256 _id) external view returns (Data memory) {
-        if (!lands[_id].hasValue) revert('Element does not exists');
+        if (!lands[_id].hasValue) revert('Element does not exist');
         return lands[_id];
     }
     
@@ -69,7 +69,7 @@ contract Land is ERC721 {
     }
     
     function getOwnerByLand(uint256 _id) external view returns (address) {
-        if (!lands[_id].hasValue) revert('Element does not exists');
+        if (!lands[_id].hasValue) revert('Element does not exist');
         return ownersByLandId[_id];
     }
     
