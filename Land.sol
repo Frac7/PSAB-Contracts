@@ -21,17 +21,12 @@ contract Land is ERC721 {
         uint256 hashId;
     }
     
-    //owner data
-    struct Owner {
-        uint256[] landsOwned; //ids of owner's lands
-    }
-    
     //state variables of this contract
     mapping (uint256 => Data) private lands;
-    mapping (address => Owner) private owners;
+    mapping (address => uint256[]) private landsByOwner;
     //given the owner's address as the key, the value is the strcut of type owner
-    //in this way, given an address, the list of his/her lands can be retrieve
-    uint private lastLandId;
+    //in this way, given an address, the list of his/her lands can be retrieved
+    uint256 private lastLandId;
     mapping (uint256 => address) private ownersByLandId;
     Storage private dataStorage;
     
@@ -48,7 +43,7 @@ contract Land is ERC721 {
     }
     
     function register(string calldata _description, bytes32[] calldata _documents) external {
-        owners[msg.sender].landsOwned.push(lastLandId);
+        landsByOwner[msg.sender].push(lastLandId);
         
         lands[lastLandId].description = _description;
         lands[lastLandId].documents = _documents;
@@ -66,8 +61,8 @@ contract Land is ERC721 {
         return lands[_id];
     }
     
-    function getByOwner(address _address) external view returns (Owner memory) {
-        return owners[_address];
+    function getByOwner(address _address) external view returns (uint256[] memory) {
+        return landsByOwner[_address];
     }
     
     function getOwnerByLand(uint256 _id) external view returns (address) {
