@@ -17,7 +17,7 @@ contract Land is ERC721 {
     //land data
     struct Data {
         string description;
-        bytes32[] documents;
+        bytes[] documents;
         uint256 hashId;
         bool hasValue;
     }
@@ -43,7 +43,7 @@ contract Land is ERC721 {
         _;
     }
     
-    function register(string calldata _description, bytes32[] calldata _documents) external {
+    function register(string calldata _description, bytes[] calldata _documents) external {
         landsByOwner[msg.sender].push(lastLandId);
         
         lands[lastLandId].description = _description;
@@ -54,7 +54,7 @@ contract Land is ERC721 {
         lastLandId++;
     }
     
-    function divide(uint256 _id, string calldata _description, bytes32[] calldata _documents, address contractAddress) external onlyOwner(_id) {
+    function divide(uint256 _id, string calldata _description, bytes[] calldata _documents, address contractAddress) external onlyOwner(_id) {
         if (!lands[_id].hasValue) revert('Element does not exist');
         Portion(contractAddress).register(_id, _description, _documents);
     }
