@@ -7,6 +7,9 @@ import '../../OpenZeppelin/openzeppelin-contracts/contracts/token/ERC721/ERC721.
 import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 
 import './Storage.sol';
+import './Product.sol';
+import './Maintenance.sol';
+import './ProductionActivity.sol';
 
 contract Portion is ERC721 {
     using SafeMath for uint256;
@@ -92,10 +95,10 @@ contract Portion is ERC721 {
         portionTerms[_portionId] = terms;
     }
     
-    function sell(uint256 _portionId, address _buyer) external onlyOwnerAndBuyer(_portionId) { //sell and transfer ownership
-        if (!portions[_portionId].hasValue) revert('Element does not exist');
-        portionTerms[_portionId].buyer = _buyer;
-        portionsByBuyer[_buyer].push(_portionId);
+    function sell(uint256 _id, address _buyer) external onlyOwnerAndBuyer(_id) { //sell and transfer ownership
+        if (!portions[_id].hasValue) revert('Element does not exist');
+        portionTerms[_id].buyer = _buyer;
+        portionsByBuyer[_buyer].push(_id);
     }
     
     function getById(uint256 _id) external view returns (Data memory, TermsOfSale memory) {
@@ -113,6 +116,21 @@ contract Portion is ERC721 {
     
     function getTotalPortions() external view returns (uint256) {
         return lastPortionId;
+    }
+    
+    function registerProduct(string calldata _description, uint256 _id, address contractAddress) external {
+        if (!portions[_id].hasValue) revert('Element does not exist');
+        Product(contractAddress).register(_description, _id);
+    }
+    
+    function registerProductionActivity(string calldata _description, uint256 _id, address contractAddress) external {
+        if (!portions[_id].hasValue) revert('Element does not exist');
+        ProductionActivity(contractAddress).register(_description, _id);
+    }
+    
+    function registerMaintenance(string calldata _description, uint256 _id, address contractAddress) external {
+        if (!portions[_id].hasValue) revert('Element does not exist');
+        Maintenance(contractAddress).register(_description, _id);
     }
     
 }
