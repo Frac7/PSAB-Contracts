@@ -73,7 +73,7 @@ contract Land is ERC721 {
         return ownersByLandId[_id];
     }
     
-    function getTotalLands() external view returns (uint256) {
+    function getTotal() external view returns (uint256) {
         return lastLandId;
     }
 }
