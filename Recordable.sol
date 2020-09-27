@@ -14,17 +14,9 @@ contract Recordable {
         address registerdBy;
     }
     
-    struct Operator {
-        uint256[] itemRegistered;
-    }
-    
-    struct Portion {
-        uint256[] itemPerformed;
-    }
-    
     mapping (uint256 => Data) private items;
-    mapping (address => Operator) private operators;
-    mapping (uint256 => Portion) private portions;
+    mapping (address => uint256[]) private itemsByOperators;
+    mapping (uint256 => uint256[]) private itemsByPortions;
     
     uint lastId;
 
@@ -34,9 +26,9 @@ contract Recordable {
         items[lastId].registerdBy = msg.sender;
         
         
-        operators[msg.sender].itemRegistered.push(lastId);
+        itemsByOperators[msg.sender].push(lastId);
         
-        portions[_id].itemPerformed.push(lastId);
+        itemsByPortions[_id].push(lastId);
         
         lastId++;
     }
@@ -45,12 +37,12 @@ contract Recordable {
         return items[_id];
     }
     
-    function getByOperator(address _address) external view returns (Operator memory) {
-        return operators[_address];
+    function getByOperator(address _address) external view returns (uint256[] memory) {
+        return itemsByOperators[_address];
     }
     
-    function getByPortion(uint256 _id) external view returns (Portion memory) {
-        return portions[_id];
+    function getByPortion(uint256 _id) external view returns (uint256[] memory) {
+        return itemsByPortions[_id];
     }
     
     function getTotal() external view returns (uint256) {
