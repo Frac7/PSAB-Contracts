@@ -14,22 +14,22 @@ contract Certifiable {
         uint256 item;
     }
     
-    uint256 lastId;
+    uint256 private lastCertificationId;
     
     mapping (uint256 => uint256[]) private certificationsByItem;
     mapping (uint256 => Certification) private certifications;
     mapping (address => uint256[]) private certificationsByCertifiers;
     
     function certify(uint256 _id, string calldata _description) external {
-        certifications[lastId].description = _description;
-        certifications[lastId].certifier = msg.sender;
-        certifications[lastId].item = _id;
+        certifications[lastCertificationId].description = _description;
+        certifications[lastCertificationId].certifier = msg.sender;
+        certifications[lastCertificationId].item = _id;
         
         certificationsByCertifiers[msg.sender].push(_id);
         
-        certificationsByItem[_id].push(lastId);
+        certificationsByItem[_id].push(lastCertificationId);
         
-        lastId ++;
+        lastCertificationId ++;
     }
     
     
@@ -44,9 +44,5 @@ contract Certifiable {
     
     function getByItem(uint256 _id) external view returns (uint256[] memory) {
         return certificationsByItem[_id];
-    }
-    
-    function getTotalCertification() external view returns (uint256) {
-        return lastId;
     }
 }
