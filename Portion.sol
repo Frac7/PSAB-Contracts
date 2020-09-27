@@ -114,7 +114,7 @@ contract Portion is ERC721 {
         return portionsByBuyer[_buyer];
     }
     
-    function getTotalPortions() external view returns (uint256) {
+    function getTotal() external view returns (uint256) {
         return lastPortionId;
     }
     
