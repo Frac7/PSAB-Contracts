@@ -18,7 +18,7 @@ contract Certifiable {
     mapping (uint256 => Certification) private certifications;
     mapping (address => uint256[]) private certificationsByCertifiers;
     
-    function certify(uint256 _id, string calldata _description) external {
+    function certify(uint256 _id, string calldata _description) external virtual {
         certifications[lastCertificationId].description = _description;
         certifications[lastCertificationId].certifier = msg.sender;
         
