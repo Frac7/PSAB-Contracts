@@ -17,17 +17,9 @@ contract Portion is ERC721 {
         uint256 hashId;
     }
     
-    struct Owner {
-        uint256[] portionsOwned;
-    }
-    
-    struct Buyer {
-        uint256[] portionsBought;
-    }
-    
     struct TermsOfSale {
         uint256 price;
-        uint256 duration; //perpetual or for n years
+        string duration; //perpetual or for n years
         string expectedProduction;
         string periodicity;
         uint256 expectedMaintenanceCost;
@@ -38,8 +30,8 @@ contract Portion is ERC721 {
     }
     
     mapping (uint256 => Data) private portions;
-    mapping (address => Owner) private owners;
-    mapping (address => Buyer) private buyers;
+    mapping (address => uint256[]) private portionsByOwner;
+    mapping (address => uint256[]) private portionsByBuyer;
     mapping (uint256 => TermsOfSale) private portionTerms;
     
     uint256 private lastPortionId;
@@ -72,13 +64,15 @@ contract Portion is ERC721 {
         
         portions[lastPortionId].hashId = dataStorage.add(_documents);
         
+        portionsByOwner[msg.sender].push(lastPortionId);
+        
         lastPortionId++;
     }
     
     function defineTerms(
         uint256 _portionId,
         uint256 _price,
-        uint256 _duration,
+        string calldata _duration,
         string calldata _expectedProduction,
         string calldata _periodicity,
         uint256 _expectedMaintenanceCost,
@@ -97,18 +91,19 @@ contract Portion is ERC721 {
     
     function sell(uint256 _portionId, address _buyer) external onlyOwnerAndBuyer(_portionId) { //sell and transfer ownership
         portionTerms[_portionId].buyer = _buyer;
+        portionsByBuyer[_buyer].push(_portionId);
     }
     
-    function get(uint256 _id) external view returns (Data memory, TermsOfSale memory) {
+    function getById(uint256 _id) external view returns (Data memory, TermsOfSale memory) {
         return (portions[_id], portionTerms[_id]);
     }
     
-    function getByOwner(address _owner) external view returns (Owner memory) {
-        return owners[_owner];
+    function getByOwner(address _owner) external view returns (uint256[] memory) {
+        return portionsByOwner[_owner];
     }
     
-    function getByBuyer(address _buyer) external view returns (Buyer memory) {
-        return buyers[_buyer];
+    function getByBuyer(address _buyer) external view returns (uint256[] memory) {
+        return portionsByBuyer[_buyer];
     }
     
     function getTotalPortions() external view returns (uint256) {
