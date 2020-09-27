@@ -56,7 +56,7 @@ contract Portion is ERC721 {
         _;
     }
     
-    function register(uint256 _landId, string calldata _description, bytes32[] calldata _documents) external {
+    function register(uint256 _landId, string memory _description, bytes32[] memory _documents) public {
         portions[lastPortionId].description = _description;
         portions[lastPortionId].documents = _documents;
         
