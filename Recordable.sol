@@ -33,7 +33,7 @@ contract Recordable {
         lastId++;
     }
     
-    function getById(uint256 _id) public view returns (Data memory) {
+    function getById(uint256 _id) external view returns (Data memory) {
         if (items[_id].registerdBy == address(0)) revert('Element does not exist');
         return items[_id];
     }
