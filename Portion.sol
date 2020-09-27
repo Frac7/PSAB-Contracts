@@ -15,6 +15,7 @@ contract Portion is ERC721 {
         string description;
         bytes32[] documents;
         uint256 hashId;
+        bool hasValue;
     }
     
     struct TermsOfSale {
@@ -63,6 +64,7 @@ contract Portion is ERC721 {
         portionTerms[lastPortionId] = terms;
         
         portions[lastPortionId].hashId = dataStorage.add(_documents);
+        portions[lastPortionId].hasValue = true;
         
         portionsByOwner[msg.sender].push(lastPortionId);
         
@@ -78,6 +80,7 @@ contract Portion is ERC721 {
         uint256 _expectedMaintenanceCost,
         uint256 _expectedProdActivityCost
     ) external onlyOwner(_portionId) {
+        if (!portions[_portionId].hasValue) revert('Element does not exist');
         TermsOfSale memory terms;
         terms.price = _price;
         terms.duration = _duration;
@@ -90,11 +93,13 @@ contract Portion is ERC721 {
     }
     
     function sell(uint256 _portionId, address _buyer) external onlyOwnerAndBuyer(_portionId) { //sell and transfer ownership
+        if (!portions[_portionId].hasValue) revert('Element does not exist');
         portionTerms[_portionId].buyer = _buyer;
         portionsByBuyer[_buyer].push(_portionId);
     }
     
     function getById(uint256 _id) external view returns (Data memory, TermsOfSale memory) {
+        if (!portions[_id].hasValue) revert('Element does not exist');
         return (portions[_id], portionTerms[_id]);
     }
     
