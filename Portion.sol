@@ -17,7 +17,7 @@ contract Portion is ERC721 {
     struct Data {
         uint256 land;
         string description;
-        bytes32[] documents;
+        bytes[] documents;
         uint256 hashId;
         bool hasValue;
     }
@@ -57,7 +57,7 @@ contract Portion is ERC721 {
         _;
     }
     
-    function register(uint256 _landId, string memory _description, bytes32[] memory _documents) public {
+    function register(uint256 _landId, string memory _description, bytes[] memory _documents) public {
         portions[lastPortionId].description = _description;
         portions[lastPortionId].documents = _documents;
         portions[lastPortionId].land = _landId;
