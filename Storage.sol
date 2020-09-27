@@ -18,7 +18,7 @@ contract Storage {
         return lastItemId - 1;
     }
     
-    function getbYiD(uint256 id) public view returns(bytes32) {
+    function getById(uint256 id) public view returns(bytes32) {
         return items[id];
     }
 }
