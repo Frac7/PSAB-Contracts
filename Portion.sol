@@ -15,6 +15,7 @@ contract Portion is ERC721 {
     using SafeMath for uint256;
     
     struct Data {
+        uint256 land;
         string description;
         bytes32[] documents;
         uint256 hashId;
@@ -59,6 +60,7 @@ contract Portion is ERC721 {
     function register(uint256 _landId, string memory _description, bytes32[] memory _documents) public {
         portions[lastPortionId].description = _description;
         portions[lastPortionId].documents = _documents;
+        portions[lastPortionId].land = _landId;
         
         TermsOfSale memory terms;
         terms.landId = _landId;
