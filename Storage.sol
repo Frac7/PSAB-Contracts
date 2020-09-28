@@ -11,7 +11,7 @@ contract Storage {
     mapping (uint256 => bytes32) private items;
     uint private lastItemId;
     
-    function add(bytes[] memory _item) public returns(uint256){
+    function add(string memory _item) public returns(uint256) {
         items[lastItemId] = keccak256(abi.encodePacked(_item));
         lastItemId++;
         
