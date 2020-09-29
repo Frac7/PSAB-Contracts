@@ -11,7 +11,7 @@ contract Recordable {
     struct Data {
         string description;
         uint256 portion;
-        address registerdBy;
+        address registeredBy;
     }
     
     mapping (uint256 => Data) private items;
@@ -23,7 +23,7 @@ contract Recordable {
     function register(string calldata _description, uint256 _id) external {
         items[lastId].description = _description;
         items[lastId].portion = _id;
-        items[lastId].registerdBy = msg.sender;
+        items[lastId].registeredBy = msg.sender;
         
         
         itemsByOperators[msg.sender].push(lastId);
@@ -34,7 +34,7 @@ contract Recordable {
     }
     
     function getById(uint256 _id) external view returns (Data memory) {
-        if (items[_id].registerdBy == address(0)) revert('Element does not exist');
+        if (items[_id].registeredBy == address(0)) revert('Element does not exist');
         return items[_id];
     }
     
