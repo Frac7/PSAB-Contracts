@@ -29,7 +29,6 @@ contract Portion is ERC721 {
         string periodicity;
         uint256 expectedMaintenanceCost;
         uint256 expectedProdActivityCost;
-        uint256 landId;
         address owner;
         address buyer; //this will be filled after the trading
     }
@@ -63,11 +62,7 @@ contract Portion is ERC721 {
         portions[lastPortionId].documents = _documents;
         portions[lastPortionId].land = _landId;
         
-        TermsOfSale memory terms;
-        terms.landId = _landId;
-        terms.owner = msg.sender;
-        
-        portionTerms[lastPortionId] = terms;
+        portionTerms[lastPortionId].owner = msg.sender;
         
         buyersByPortions[lastPortionId].push(msg.sender);
         
@@ -89,15 +84,12 @@ contract Portion is ERC721 {
         uint256 _expectedProdActivityCost
     ) external onlyOwner(_portionId) {
         if (!portions[_portionId].hasValue) revert('Element does not exist');
-        TermsOfSale memory terms;
-        terms.price = _price;
-        terms.duration = _duration;
-        terms.expectedProduction = _expectedProduction;
-        terms.periodicity = _periodicity;
-        terms.expectedMaintenanceCost = _expectedMaintenanceCost;
-        terms.expectedProdActivityCost = _expectedProdActivityCost;
-
-        portionTerms[_portionId] = terms;
+        portionTerms[_portionId].price = _price;
+        portionTerms[_portionId].duration = _duration;
+        portionTerms[_portionId].expectedProduction = _expectedProduction;
+        portionTerms[_portionId].periodicity = _periodicity;
+        portionTerms[_portionId].expectedMaintenanceCost = _expectedMaintenanceCost;
+        portionTerms[_portionId].expectedProdActivityCost = _expectedProdActivityCost;
     }
     
     function sell(uint256 _id, address _buyer) external onlyOwnerAndBuyer(_id) { //sell and transfer ownership
