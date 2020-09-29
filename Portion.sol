@@ -38,6 +38,7 @@ contract Portion is ERC721 {
     mapping (address => uint256[]) private portionsByOwner;
     mapping (address => uint256[]) private portionsByBuyer;
     mapping (uint256 => TermsOfSale) private portionTerms;
+    mapping (uint256 => address[]) buyersByPortions;
     
     uint256 private lastPortionId;
     
@@ -67,6 +68,8 @@ contract Portion is ERC721 {
         terms.owner = msg.sender;
         
         portionTerms[lastPortionId] = terms;
+        
+        buyersByPortions[lastPortionId].push(msg.sender);
         
         portions[lastPortionId].hashId = dataStorage.add(_base64);
         portions[lastPortionId].hasValue = true;
@@ -101,6 +104,8 @@ contract Portion is ERC721 {
         if (!portions[_id].hasValue) revert('Element does not exist');
         portionTerms[_id].buyer = _buyer;
         portionsByBuyer[_buyer].push(_id);
+        
+        buyersByPortions[_id].push(_buyer);
     }
     
     function getById(uint256 _id) external view returns (Data memory, TermsOfSale memory) {
@@ -114,6 +119,10 @@ contract Portion is ERC721 {
     
     function getByBuyer(address _buyer) external view returns (uint256[] memory) {
         return portionsByBuyer[_buyer];
+    }
+    
+    function getBuyersByPortion(uint256 _id) external view returns (address[] memory) {
+        return buyersByPortions[_id];
     }
     
     function getTotal() external view returns (uint256) {
