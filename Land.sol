@@ -50,7 +50,7 @@ contract Land {
     /// @param _base64 Documents base64 encoded for calculating hash
     function register(string calldata _description, string calldata _documents, string calldata _base64) external {
         landsByOwner[msg.sender].push(lastLandId);
-        ownersByLandId[_landId] = msg.sender;
+        ownersByLandId[lastLandId] = msg.sender;
         
         lands[lastLandId].description = _description;
         lands[lastLandId].documents = _documents;
