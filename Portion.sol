@@ -85,7 +85,7 @@ contract Portion is ERC721 {
     ) external onlyOwner(_portionId) {
         if (!portions[_portionId].hasValue) revert('Element does not exist');
         portionTerms[_portionId].price = _price;
-        portionTerms[_portionId].duration = _duration;
+        portionTerms[_portionId].duration = now + _duration;
         portionTerms[_portionId].expectedProduction = _expectedProduction;
         portionTerms[_portionId].periodicity = _periodicity;
         portionTerms[_portionId].expectedMaintenanceCost = _expectedMaintenanceCost;
