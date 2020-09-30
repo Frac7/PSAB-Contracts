@@ -4,7 +4,7 @@ const ProductionActivity = artifacts.require('ProductionActivity');
 const Maintenance = artifacts.require('Maintenance');
 
 contract('Recordable test', async (accounts) => {
-    it('should register a product', async () => {
+    it('Should register a product', async () => {
         const instance = await Product.deployed();
 
         await instance.register('Product 0', 0, { from: accounts[1] });
@@ -22,7 +22,7 @@ contract('Recordable test', async (accounts) => {
         //expect(productsByPortion.includes(0), 'Product must be registered in this portion').to.be.true;
     });
 
-    it('should register a production activity', async () => {
+    it('Should register a production activity', async () => {
         const instance = await ProductionActivity.deployed();
 
         await instance.register('Production 0', 0, { from: accounts[1] });
@@ -40,7 +40,7 @@ contract('Recordable test', async (accounts) => {
         //expect(productionsByPortion.includes(0), 'Production activity must be registered in this portion').to.be.true;
     });
 
-    it('should register a maintenance activity', async () => {
+    it('Should register a maintenance activity', async () => {
         const instance = await Maintenance.deployed();
 
         await instance.register('Maintenance 0', 0, { from: accounts[1] });
