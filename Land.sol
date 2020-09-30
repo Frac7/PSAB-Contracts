@@ -8,8 +8,8 @@ import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 import './Storage.sol';
 import './Portion.sol';
 
+/// @title This contract represents a land/agricultural resource
 contract Land {
-    /// @title This contract represents a land/agricultural resource
     
     using SafeMath for uint256;
     
