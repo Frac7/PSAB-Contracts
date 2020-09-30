@@ -3,8 +3,10 @@
 pragma solidity ^0.6.0;
 pragma experimental ABIEncoderV2;
 
-import '../../OpenZeppelin/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol';
-import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
+//import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
+import '@openzeppelin/contracts/math/SafeMath.sol';
+
+
 import './Storage.sol';
 import './Portion.sol';
 
