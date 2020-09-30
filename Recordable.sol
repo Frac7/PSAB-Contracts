@@ -6,8 +6,6 @@ pragma experimental ABIEncoderV2;
 //import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 import '@openzeppelin/contracts/math/SafeMath.sol';
 
-
-
 /// @title Contract representing a recordable item
 contract Recordable {    
     using SafeMath for uint256;

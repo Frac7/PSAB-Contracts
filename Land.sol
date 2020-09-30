@@ -6,7 +6,6 @@ pragma experimental ABIEncoderV2;
 //import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 import '@openzeppelin/contracts/math/SafeMath.sol';
 
-
 import './Storage.sol';
 import './Portion.sol';
 
