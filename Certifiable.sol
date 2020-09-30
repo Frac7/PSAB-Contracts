@@ -19,7 +19,7 @@ contract Certifiable {
     mapping (address => uint256[]) private certificationsByCertifiers;
     mapping (uint256 => uint256[]) private certificationsByItems;
     
-    function certify(uint256 _id, string memory _description) public {
+    function certify(uint256 _id, string calldata _description) external {
         certifications[lastCertificationId].description = _description;
         certifications[lastCertificationId].certifier = msg.sender;
         
