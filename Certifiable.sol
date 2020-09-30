@@ -5,9 +5,8 @@ pragma experimental ABIEncoderV2;
 
 import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 
-contract Certifiable {
-    /// @title Certifiable item
-    
+/// @title Certifiable item
+contract Certifiable {    
     using SafeMath for uint256;
     
     /// @dev A certification is represented by a description and the certifier's address
