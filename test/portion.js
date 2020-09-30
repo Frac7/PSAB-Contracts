@@ -4,7 +4,7 @@ const Product = artifacts.require('Product');
 const ProductionActivity = artifacts.require('ProductionActivity');
 const Maintenance = artifacts.require('Maintenance');
 
-contract('Land test', async (accounts) => {
+contract('Portion test', async (accounts) => {
     it('should register a portion', async () => {
         const instance = await Portion.deployed();
 
@@ -104,7 +104,7 @@ contract('Land test', async (accounts) => {
         const instance = await Portion.deployed();
 
         await instance.register(0, 'Portion 3', 'Attachment', 'Attachment encoding', { from: accounts[1] });
-        await instance.sell(0, accounts[2], { from: accounts[1] });
+        await instance.sell(3, accounts[2], { from: accounts[1] });
 
         const buyersByPortions = await instance.getBuyersByPortion(0);
         expect(buyersByPortions.includes(accounts[2])).to.be.true;
@@ -118,6 +118,5 @@ contract('Land test', async (accounts) => {
 
         const portionData = await instance.getById(3, { from: accounts[1] });
         expect(portionData[1].buyer).to.be.equal('0x0000000000000000000000000000000000000000');
-
-    })
+    });
 });
