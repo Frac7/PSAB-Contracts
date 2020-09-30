@@ -8,6 +8,10 @@ import './Recordable.sol';
 import './Certifiable.sol';
 
 contract ProductionActivity is Recordable, Certifiable {
+    /// @title Production activity contract. A production activity is recordable by an operator and certifiable by a certifier.
+    
+    /// @param _id Production activity ID
+    /// @param _description Description of certification
     function certifyProduction(uint256 _id, string calldata _description) external {
         if (this.getById(_id).registeredBy == address(0)) revert('Element does not exist');
         this.certify(_id, _description);
