@@ -24,7 +24,7 @@ contract Portion is ERC721 {
     
     struct TermsOfSale {
         uint256 price;
-        string duration; //perpetual or for n years
+        uint256 duration; //perpetual or for n years
         string expectedProduction;
         string periodicity;
         uint256 expectedMaintenanceCost;
@@ -48,12 +48,12 @@ contract Portion is ERC721 {
     }
     
     modifier onlyOwner(uint256 _portionId) {
-        require(portionTerms[_portionId].owner == msg.sender);
+        require(portionTerms[_portionId].owner == msg.sender, 'Only owner is allowed');
         _;
     }
     
     modifier onlyOwnerAndBuyer(uint256 _portionId) {
-        require(portionTerms[_portionId].owner == msg.sender || portionTerms[_portionId].buyer == msg.sender);
+        require(portionTerms[_portionId].owner == msg.sender || portionTerms[_portionId].buyer == msg.sender, 'Only owner or buyer are allowed');
         _;
     }
     
@@ -77,7 +77,7 @@ contract Portion is ERC721 {
     function defineTerms(
         uint256 _portionId,
         uint256 _price,
-        string calldata _duration,
+        uint256 _duration,
         string calldata _expectedProduction,
         string calldata _periodicity,
         uint256 _expectedMaintenanceCost,
@@ -98,6 +98,12 @@ contract Portion is ERC721 {
         portionsByBuyer[_buyer].push(_id);
         
         buyersByPortions[_id].push(_buyer);
+    }
+    
+    function ownershipExpiration(uint256 _id) external {
+        if (!portions[_id].hasValue) revert('Element does not exist');
+        if (portionTerms[_id].duration == 0 || now < portionTerms[_id].duration) revert('Owneship expiration not allowed');
+        portionTerms[_id].buyer = address(0);
     }
     
     function getById(uint256 _id) external view returns (Data memory, TermsOfSale memory) {
