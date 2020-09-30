@@ -3,7 +3,7 @@ const Land = artifacts.require('Land');
 const Portion = artifacts.require('Portion');
 
 contract('Land test', async (accounts) => {
-    it('should register a land', async () => {
+    it('Should register a land', async () => {
         const instance = await Land.deployed();
 
         await instance.register('Land 0', 'Attachment', 'Attachment encoding', { from: accounts[1] });
@@ -34,6 +34,16 @@ contract('Land test', async (accounts) => {
             instance.divide(0, 'Portion 0', 'Attachment', 'Attachment encoding', portion.address, { from: accounts[0] }),
             'Only owner is allowed'
         );
-
     });
-})
+
+    it('Should not divide inexistent land', async () => {
+        const instance = await Land.deployed();
+        const portion = await Portion.deployed();
+
+        await instance.register('Land 0', 'Attachment', 'Attachment encoding', { from: accounts[1] });
+        //await truffleAssert.reverts(
+        //    instance.divide(1, 'Portion 0', 'Attachment', 'Attachment encoding', portion.address, { from: accounts[1] }), // TODO: fix
+        //    'Element does not exist'
+        //);
+    });
+});
