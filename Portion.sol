@@ -11,7 +11,7 @@ import './Product.sol';
 import './Maintenance.sol';
 import './ProductionActivity.sol';
 
-contract Portion is ERC721 {
+contract Portion {
     using SafeMath for uint256;
     
     struct Data {
@@ -43,7 +43,7 @@ contract Portion is ERC721 {
     
     Storage private dataStorage;
     
-    constructor (string memory name, string memory symbol, address _dataStorage) public ERC721 (name, symbol) {
+    constructor (address _dataStorage) public  {
         dataStorage = Storage(_dataStorage);
     }
     
