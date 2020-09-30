@@ -6,8 +6,8 @@ import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 import './Recordable.sol';
 import './Certifiable.sol';
 
+/// @title Product item contract. A product is recordable by an operator and certifiable by a certifier.
 contract Product is Recordable, Certifiable {
-    /// @title Product item contract. A product is recordable by an operator and certifiable by a certifier.
     
     /// @param _id Product ID
     /// @param _description Description of certification
