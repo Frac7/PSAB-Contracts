@@ -39,7 +39,7 @@ contract Land is ERC721 {
     
     //only owner address associated to the land id
     modifier onlyOwner(uint256 _landId) {
-        require(ownersByLandId[_landId] == msg.sender);
+        require(ownersByLandId[_landId] == msg.sender, 'Only owner is allowed');
         _;
     }
     
