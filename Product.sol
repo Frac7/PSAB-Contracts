@@ -8,6 +8,10 @@ import './Recordable.sol';
 import './Certifiable.sol';
 
 contract Product is Recordable, Certifiable {
+    /// @title Product item contract. A product is recordable by an operator and certifiable by a certifier.
+    
+    /// @param _id Product ID
+    /// @param _description Description of certification
     function certifyProduct(uint256 _id, string calldata _description) external {
         if (this.getById(_id).registeredBy == address(0)) revert('Element does not exist');
         this.certify(_id, _description);
