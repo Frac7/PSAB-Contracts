@@ -5,9 +5,8 @@ pragma experimental ABIEncoderV2;
 
 import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 
-contract Storage {
-    /// @title Contract for storing hased base64 documents
-    
+/// @title Contract for storing hased base64 documents
+contract Storage {    
     using SafeMath for uint256;
     
     /// @dev Hashes by ID
