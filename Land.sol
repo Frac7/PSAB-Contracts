@@ -11,7 +11,7 @@ import './Portion.sol';
 /**
  * This contract represents a land/agricultural resource.
  */
-contract Land is ERC721 {
+contract Land {
     using SafeMath for uint256;
     
     //land data
@@ -33,7 +33,7 @@ contract Land is ERC721 {
     
     //the constructor is called once before the deploy to the blockchain
     //the Storage contract must be on the blockchain before the deploy of this contract
-    constructor (string memory name, string memory symbol, address _dataStorage) public ERC721 (name, symbol) {
+    constructor (address _dataStorage) public {
         dataStorage = Storage(_dataStorage);
     }
     
