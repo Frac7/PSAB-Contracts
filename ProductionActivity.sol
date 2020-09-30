@@ -6,8 +6,8 @@ import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 import './Recordable.sol';
 import './Certifiable.sol';
 
+/// @title Production activity contract. A production activity is recordable by an operator and certifiable by a certifier.
 contract ProductionActivity is Recordable, Certifiable {
-    /// @title Production activity contract. A production activity is recordable by an operator and certifiable by a certifier.
     
     /// @param _id Production activity ID
     /// @param _description Description of certification
