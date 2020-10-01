@@ -30,13 +30,19 @@ contract Certifiable {
     /// @param _description Certification description
     function certify(uint256 _id, string calldata _description) external {
         certifications[lastCertificationId].description = _description;
-        certifications[lastCertificationId].certifier = msg.sender;
-        
         certificationsByItems[_id].push(_id);
-        
-        certificationsByCertifiers[msg.sender].push(_id);
-        
+                       
         lastCertificationId ++;
+    }
+
+    /// @param _id Item to be certified
+    /// @param _description Certification description
+    /// @param _source Original sender
+    function certify(uint256 _id, string calldata _description, address _source) external {
+        certifications[lastCertificationId].certifier = _source;
+        certificationsByCertifiers[_source].push(_id);
+
+        this.certify(_id, _description);
     }
     
     /// @param _id Item for which to retrieve certifications

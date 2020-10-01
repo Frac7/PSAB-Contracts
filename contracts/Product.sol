@@ -16,6 +16,6 @@ contract Product is Recordable, Certifiable {
     /// @param _description Description of certification
     function certifyProduct(uint256 _id, string calldata _description) external {
         if (this.getById(_id).registeredBy == address(0)) revert('Element does not exist');
-        this.certify(_id, _description);
+        this.certify(_id, _description, msg.sender);
     }
 }
