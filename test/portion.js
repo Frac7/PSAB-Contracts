@@ -51,11 +51,11 @@ contract('Portion test', async (accounts) => {
             'Only owner or buyer are allowed'
         );
 
-        const portions = await instance.getByBuyer(accounts[3], { from: accounts[1] }); // TODO: fix
+        const portions = await instance.getByBuyer(accounts[3], { from: accounts[1] });
         expect(portions[0].toNumber()).to.be.equal(2);
 
-        //const buyers = await instance.getBuyersByPortion(0, { from: accounts[1] }); // TODO: fix
-        //expect(buyers.includes(accounts[3]), 'Account3 must be a buyer for this portion').to.be.true;
+        const buyers = await instance.getBuyersByPortion(2, { from: accounts[1] })
+        expect(buyers[2]).to.be.equal(accounts[3]);
     });
 
     it('Should register a product', async () => {
