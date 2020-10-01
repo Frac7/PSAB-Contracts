@@ -6,7 +6,7 @@ contract('Certifiable test', async (accounts) => {
     it('Should certify a product', async () => {
         const instance = await Product.deployed();
 
-        await instance.register('Product 0', 0, { from: accounts[1] });
+        await instance.register('Product 0', 0, accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.certifyProduct(0, 'Certification 0', { from: accounts[1] }),
             'Product must be certified'
@@ -20,7 +20,7 @@ contract('Certifiable test', async (accounts) => {
     it('Should certify a production activity', async () => {
         const instance = await ProductionActivity.deployed();
 
-        await instance.register('Product 0', 0, { from: accounts[1] });
+        await instance.register('Product 0', 0, accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.certifyProduction(0, 'Certification 0', { from: accounts[1] }),
             'Production must be certified'

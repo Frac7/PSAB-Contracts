@@ -7,7 +7,7 @@ contract('Recordable test', async (accounts) => {
     it('Should register a product', async () => {
         const instance = await Product.deployed();
 
-        await instance.register('Product 0', 0, { from: accounts[1] });
+        await instance.register('Product 0', 0, accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.getById(0, { from: accounts[1] }),
             'Product must be registered'
@@ -25,7 +25,7 @@ contract('Recordable test', async (accounts) => {
     it('Should register a production activity', async () => {
         const instance = await ProductionActivity.deployed();
 
-        await instance.register('Production 0', 0, { from: accounts[1] });
+        await instance.register('Production 0', 0, accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.getById(0, { from: accounts[1] }),
             'Production activity must be registered'
@@ -43,7 +43,7 @@ contract('Recordable test', async (accounts) => {
     it('Should register a maintenance activity', async () => {
         const instance = await Maintenance.deployed();
 
-        await instance.register('Maintenance 0', 0, { from: accounts[1] });
+        await instance.register('Maintenance 0', 0, accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.getById(0, { from: accounts[1] }),
             'Maintenance activity must be registered'

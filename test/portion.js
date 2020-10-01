@@ -8,7 +8,7 @@ contract('Portion test', async (accounts) => {
     it('should register a portion', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 0', 'Attachment', 'Attachment encoding', { from: accounts[1] });
+        await instance.register(0, 'Portion 0', 'Attachment', 'Attachment encoding', accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.getById(0, { from: accounts[1] }),
             'Portion must be registered'
@@ -23,7 +23,7 @@ contract('Portion test', async (accounts) => {
     it('Should define terms', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 1', 'Attachment', 'Attachment encoding', { from: accounts[1] });
+        await instance.register(0, 'Portion 1', 'Attachment', 'Attachment encoding', accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.defineTerms(1, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, { from: accounts[1] }),
             'Owner must be able to define the contract terms for his portion'
@@ -37,7 +37,7 @@ contract('Portion test', async (accounts) => {
     it('Should sell his portion', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 2', 'Attachment', 'Attachment encoding', { from: accounts[1] });
+        await instance.register(0, 'Portion 2', 'Attachment', 'Attachment encoding', accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.sell(2, accounts[2], { from: accounts[1] }),
             'Owner must be able to sell his portion'
@@ -103,7 +103,7 @@ contract('Portion test', async (accounts) => {
     it('Should remove buyer when ownership expires', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 3', 'Attachment', 'Attachment encoding', { from: accounts[1] });
+        await instance.register(0, 'Portion 3', 'Attachment', 'Attachment encoding', accounts[1], { from: accounts[1] });
         await instance.sell(3, accounts[2], { from: accounts[1] });
 
         const buyersByPortions = await instance.getBuyersByPortion(3);
