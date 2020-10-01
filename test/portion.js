@@ -5,7 +5,7 @@ const ProductionActivity = artifacts.require('ProductionActivity');
 const Maintenance = artifacts.require('Maintenance');
 
 contract('Portion test', async (accounts) => {
-    it('should register a portion', async () => {
+    it('Should register a portion', async () => {
         const instance = await Portion.deployed();
 
         await instance.register(0, 'Portion 0', 'Attachment', 'Attachment encoding', accounts[1], { from: accounts[1] });
@@ -118,5 +118,25 @@ contract('Portion test', async (accounts) => {
 
         const portionData = await instance.getById(3, { from: accounts[1] });
         expect(portionData[1].buyer).to.be.equal('0x0000000000000000000000000000000000000000');
+    });
+
+    it('Should not remove buyer when duration is perpetual', async () => {
+        const instance = await Portion.deployed();
+
+        await instance.register(0, 'Portion 4', 'Attachment', 'Attachment encoding', accounts[1], { from: accounts[1] });
+        await instance.sell(4, accounts[2], { from: accounts[1] });
+
+        const buyersByPortions = await instance.getBuyersByPortion(4);
+        expect(buyersByPortions.includes(accounts[2])).to.be.true;
+        
+        await instance.defineTerms(4, 42, 0, 'Expected production', 'Periodicity', 42, 42, { from: accounts[1] });
+
+        await truffleAssert.reverts(
+            instance.ownershipExpiration(4),
+            'Owneship expiration not allowed'
+        );
+
+        const portionData = await instance.getById(4, { from: accounts[1] });
+        expect(portionData[1].buyer).to.be.equal(accounts[2]);
     });
 });
