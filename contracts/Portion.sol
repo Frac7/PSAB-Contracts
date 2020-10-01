@@ -107,7 +107,6 @@ contract Portion {
         uint256 _expectedMaintenanceCost,
         uint256 _expectedProdActivityCost
     ) external onlyOwner(_portionId) {
-        if (!portions[_portionId].hasValue) revert('Element does not exist');
         portionTerms[_portionId].price = _price;
         portionTerms[_portionId].duration = _duration;
         portionTerms[_portionId].expectedProduction = _expectedProduction;
@@ -120,7 +119,6 @@ contract Portion {
     /// @param _id Portion ID
     /// @param _buyer New buyer
     function sell(uint256 _id, address _buyer) external onlyOwnerAndBuyer(_id) {
-        if (!portions[_id].hasValue) revert('Element does not exist');
         portionTerms[_id].buyer = _buyer;
         portionsByBuyer[_buyer].push(_id);
         
@@ -137,7 +135,6 @@ contract Portion {
     /// @param _id Portion ID
     /// return the tuple containing the data related to the portion and its terms of sale
     function getById(uint256 _id) external view returns (Data memory, TermsOfSale memory) {
-        if (!portions[_id].hasValue) revert('Element does not exist');
         return (portions[_id], portionTerms[_id]);
     }
     
