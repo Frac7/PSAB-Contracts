@@ -24,9 +24,9 @@ contract Portion {
         bool hasValue;
     }
     
+    /// @notice Duration parameter can be perpetual (0) or for n years
     struct TermsOfSale {
         uint256 price;
-        /// @notice This parameter can be perpetual (0) or for n years
         uint256 duration;
         string expectedProduction;
         string periodicity;
@@ -79,16 +79,23 @@ contract Portion {
         portions[lastPortionId].documents = _documents;
         portions[lastPortionId].land = _landId;
         
-        portionTerms[lastPortionId].owner = msg.sender;
-        
-        buyersByPortions[lastPortionId].push(msg.sender);
-        
         portions[lastPortionId].hashId = dataStorage.add(_base64);
         portions[lastPortionId].hasValue = true;
         
-        portionsByOwner[msg.sender].push(lastPortionId);
-        
         lastPortionId++;
+    }
+
+    /// @param _landId Land to be divided
+    /// @param _description Portion description
+    /// @param _documents Link of documents related to the portion
+    /// @param _base64 Base64 encoded documents
+    /// @param _source Original sender from divide land
+    function register(uint256 _landId, string calldata _description, string calldata _documents, string calldata _base64, address _source) external {
+        portionTerms[lastPortionId].owner = _source;
+        portionsByOwner[_source].push(lastPortionId);        
+        buyersByPortions[lastPortionId].push(_source);
+
+        this.register(_landId, _description, _documents, _base64);
     }
     
     /// @param _portionId ID of portion related
