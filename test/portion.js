@@ -51,8 +51,8 @@ contract('Portion test', async (accounts) => {
             'Only owner or buyer are allowed'
         );
 
-        //const portions = await instance.getByBuyer(accounts[3], { from: accounts[1] }); // TODO: fix
-        //expect(portions.includes(2), 'Account3 must be a buyer for this portion').to.be.true;
+        const portions = await instance.getByBuyer(accounts[3], { from: accounts[1] }); // TODO: fix
+        expect(portions[0].toNumber()).to.be.equal(2);
 
         //const buyers = await instance.getBuyersByPortion(0, { from: accounts[1] }); // TODO: fix
         //expect(buyers.includes(accounts[3]), 'Account3 must be a buyer for this portion').to.be.true;
@@ -109,14 +109,14 @@ contract('Portion test', async (accounts) => {
         const buyersByPortions = await instance.getBuyersByPortion(3);
         expect(buyersByPortions.includes(accounts[2])).to.be.true;
         
-        await instance.defineTerms(3, 42, new Date(1970,0,1).getTime(), 'Expected production', 'Periodicity', 42, 42, { from: accounts[1] });
+        await instance.defineTerms(3, 42, 1, 'Expected production', 'Periodicity', 42, 42, { from: accounts[1] });
 
-        //await truffleAssert.passes( // TODO: fix
-        //    instance.ownershipExpiration(3),
-        //    'Ownership must be expired'
-        //);
+        await truffleAssert.passes(
+            instance.ownershipExpiration(3),
+            'Ownership must be expired'
+        );
 
-        //const portionData = await instance.getById(3, { from: accounts[1] });
-        //expect(portionData[1].buyer).to.be.equal('0x0000000000000000000000000000000000000000');
+        const portionData = await instance.getById(3, { from: accounts[1] });
+        expect(portionData[1].buyer).to.be.equal('0x0000000000000000000000000000000000000000');
     });
 });

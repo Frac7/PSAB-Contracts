@@ -25,25 +25,14 @@ contract('Land test', async (accounts) => {
         const instance = await Land.deployed();
         const portion = await Portion.deployed();
 
-        await instance.register('Land 0', 'Attachment', 'Attachment encoding', { from: accounts[1] });
+        await instance.register('Land 1', 'Attachment', 'Attachment encoding', { from: accounts[1] });
         await truffleAssert.passes(
-            instance.divide(0, 'Portion 0', 'Attachment', 'Attachment encoding', portion.address, { from: accounts[1] }),
+            instance.divide(1, 'Portion 0', 'Attachment', 'Attachment encoding', portion.address, { from: accounts[1] }),
             'Owner must be able to divide his land in portions'
         );
         await truffleAssert.fails(
-            instance.divide(0, 'Portion 0', 'Attachment', 'Attachment encoding', portion.address, { from: accounts[0] }),
+            instance.divide(1, 'Portion 0', 'Attachment', 'Attachment encoding', portion.address, { from: accounts[0] }),
             'Only owner is allowed'
         );
-    });
-
-    it('Should not divide inexistent land', async () => {
-        const instance = await Land.deployed();
-        const portion = await Portion.deployed();
-
-        await instance.register('Land 0', 'Attachment', 'Attachment encoding', { from: accounts[1] });
-        //await truffleAssert.reverts(
-        //    instance.divide(1, 'Portion 0', 'Attachment', 'Attachment encoding', portion.address, { from: accounts[1] }), // TODO: fix
-        //    'Element does not exist'
-        //);
     });
 });

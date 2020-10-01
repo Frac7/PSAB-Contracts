@@ -15,11 +15,11 @@ contract('Recordable test', async (accounts) => {
         const total = await instance.getTotal({ from: accounts[1] });
         assert.equal(1, total, 'There must be exactly 1 product registered');
 
-        //const productsByOperator = await instance.getByOperator(accounts[1], { from: accounts[1] }); // TODO: fix
-        //expect(productsByOperator.includes(0), 'Product must be registered by this operator').to.be.true;
+        const productsByOperator = await instance.getByOperator(accounts[1], { from: accounts[1] });
+        expect(productsByOperator[0].toNumber()).to.be.equal(0);
 
-        //const productsByPortion = await instance.getByPortion(0, { from: accounts[1] }); // TODO: fix
-        //expect(productsByPortion.includes(0), 'Product must be registered in this portion').to.be.true;
+        const productsByPortion = await instance.getByPortion(0, { from: accounts[1] });
+        expect(productsByPortion[0].toNumber()).to.be.equal(0);
     });
 
     it('Should register a production activity', async () => {
@@ -33,11 +33,11 @@ contract('Recordable test', async (accounts) => {
         const total = await instance.getTotal({ from: accounts[1] });
         assert.equal(1, total, 'There must be exactly 1 production activity registered');
 
-        //const productionsByOperator = await instance.getByOperator(accounts[1], { from: accounts[1] }); // TODO: fix
-        //expect(productionsByOperator.includes(0), 'Production activity must be registered by this operator').to.be.true;
+        const productionsByOperator = await instance.getByOperator(accounts[1], { from: accounts[1] });
+        expect(productionsByOperator[0].toNumber()).to.be.equal(0);
 
-        //const productionsByPortion = await instance.getByPortion(0, { from: accounts[1] }); // TODO: fix
-        //expect(productionsByPortion.includes(0), 'Production activity must be registered in this portion').to.be.true;
+        const productionsByPortion = await instance.getByPortion(0, { from: accounts[1] });
+        expect(productionsByPortion[0].toNumber()).to.be.equal(0);
     });
 
     it('Should register a maintenance activity', async () => {
@@ -51,10 +51,10 @@ contract('Recordable test', async (accounts) => {
         const total = await instance.getTotal({ from: accounts[1] });
         assert.equal(1, total, 'There must be exactly 1 maintenance activity registered');
 
-        //const maintenancesByOperator = await instance.getByOperator(accounts[1], { from: accounts[1] }); // TODO: fix
-        //expect(maintenancesByOperator.includes(0), 'Maintenance activity must be registered by this operator').to.be.true;
+        const maintenancesByOperator = await instance.getByOperator(accounts[1], { from: accounts[1] });
+        expect(maintenancesByOperator[0].toNumber()).to.be.equal(0);
 
-        //const maintenancesByPortion = await instance.getByPortion(0, { from: accounts[1] }); // TODO: fix
-        //expect(maintenancesByPortion.includes(0), 'Maintenance activity must be registered in this portion').to.be.true;
+        const maintenancesByPortion = await instance.getByPortion(0, { from: accounts[1] });
+        expect(maintenancesByPortion[0].toNumber()).to.be.equal(0);
     });
 });
