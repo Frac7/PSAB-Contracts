@@ -45,7 +45,6 @@ contract Recordable {
     /// @param _id Item ID
     /// @return the item data only if the item exists
     function getById(uint256 _id) external view returns (Data memory) {
-        if (items[_id].registeredBy == address(0)) revert('Element does not exist');
         return items[_id];
     }
     
