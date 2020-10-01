@@ -173,7 +173,7 @@ contract Portion {
     /// @param _contractAddress Product contract address
     function registerProduct(string calldata _description, uint256 _id, address _contractAddress) external {
         if (!portions[_id].hasValue) revert('Element does not exist');
-        Product(_contractAddress).register(_description, _id);
+        Product(_contractAddress).register(_description, _id, msg.sender);
     }
     
     /// @param _description Production description
@@ -181,7 +181,7 @@ contract Portion {
     /// @param _contractAddress Production contract address
     function registerProductionActivity(string calldata _description, uint256 _id, address _contractAddress) external {
         if (!portions[_id].hasValue) revert('Element does not exist');
-        ProductionActivity(_contractAddress).register(_description, _id);
+        ProductionActivity(_contractAddress).register(_description, _id, msg.sender);
     }
     
     /// @param _description Maintenance description
@@ -189,7 +189,7 @@ contract Portion {
     /// @param _contractAddress Maintenance contract address
     function registerMaintenance(string calldata _description, uint256 _id, address _contractAddress) external {
         if (!portions[_id].hasValue) revert('Element does not exist');
-        Maintenance(_contractAddress).register(_description, _id);
+        Maintenance(_contractAddress).register(_description, _id, msg.sender);
     }
     
 }

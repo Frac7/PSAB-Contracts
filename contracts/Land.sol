@@ -65,7 +65,7 @@ contract Land {
     /// @param _base64 Documents base64 encoded for calculating hash
     /// @param _contractAddress Address of Portion contract    
     function divide(uint256 _id, string calldata _description, string calldata _documents, string calldata _base64, address _contractAddress) external onlyOwner(_id) {
-        Portion(_contractAddress).register(_id, _description, _documents, _base64);
+        Portion(_contractAddress).register(_id, _description, _documents, _base64, msg.sender);
     }
     
     /// @param _id Land ID

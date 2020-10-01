@@ -32,16 +32,22 @@ contract Recordable {
     function register(string calldata _description, uint256 _id) external {
         items[lastId].description = _description;
         items[lastId].portion = _id;
-        items[lastId].registeredBy = msg.sender;
-        
-        
-        itemsByOperators[msg.sender].push(lastId);
         
         itemsByPortions[_id].push(lastId);
         
         lastId++;
     }
-    
+
+    /// @param _description Item description
+    /// @param _id Related portion ID
+    /// @param _source Original sender
+    function register(string calldata _description, uint256 _id, address _source) external {
+        items[lastId].registeredBy = _source;
+        itemsByOperators[_source].push(lastId);
+
+        this.register(_description, _id);        
+    }
+
     /// @param _id Item ID
     /// @return the item data only if the item exists
     function getById(uint256 _id) external view returns (Data memory) {
