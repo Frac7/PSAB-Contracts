@@ -19,8 +19,6 @@ contract Land {
         string description;
         string documents;
         uint256 hashId;
-        /// @notice This flag is used for reverting the contract status when a user tries to divide an inexistent land
-        bool hasValue;
     }
     
     /// @dev All the lands
@@ -56,7 +54,6 @@ contract Land {
         lands[lastLandId].description = _description;
         lands[lastLandId].documents = _documents;
         lands[lastLandId].hashId = dataStorage.add(_base64);
-        lands[lastLandId].hasValue = true;
         
         lastLandId++;
     }
@@ -68,14 +65,12 @@ contract Land {
     /// @param _base64 Documents base64 encoded for calculating hash
     /// @param _contractAddress Address of Portion contract    
     function divide(uint256 _id, string calldata _description, string calldata _documents, string calldata _base64, address _contractAddress) external onlyOwner(_id) {
-        if (!lands[_id].hasValue) revert('Element does not exist');
         Portion(_contractAddress).register(_id, _description, _documents, _base64);
     }
     
     /// @param _id Land ID
     /// @return the data of the land
     function getById(uint256 _id) external view returns (Data memory) {
-        if (!lands[_id].hasValue) revert('Element does not exist');
         return lands[_id];
     }
     
@@ -88,7 +83,6 @@ contract Land {
     /// @param _id Land ID
     /// @return the address of the owner
     function getOwnerByLand(uint256 _id) external view returns (address) {
-        if (!lands[_id].hasValue) revert('Element does not exist');
         return ownersByLandId[_id];
     }
     
