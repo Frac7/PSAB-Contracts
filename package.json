@@ -3,6 +3,8 @@
     "@openzeppelin/contracts": "^3.1.0"
   },
   "scripts": {
+    "compile": "truffle compile",
+    "migrate": "truffle migrate",
     "docs": "solidity-docgen -i . -o ./docs",
     "test": "truffle test ./test/*"
   },
