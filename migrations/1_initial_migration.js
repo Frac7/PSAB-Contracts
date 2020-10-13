@@ -7,13 +7,13 @@ const Storage = artifacts.require("Storage");
 const Portion = artifacts.require("Portion");
 const Land = artifacts.require("Land");
 
-module.exports = function (deployer) {
-  deployer.deploy(Recordable);
-  deployer.deploy(Certifiable);
-  deployer.deploy(Maintenance);
-  deployer.deploy(Product);
-  deployer.deploy(ProductionActivity);
-  deployer.deploy(Storage);
-  deployer.deploy(Portion, Storage.address);
-  deployer.deploy(Land, Storage.address);
+module.exports = async function (deployer) {
+  await deployer.deploy(Recordable);
+  await deployer.deploy(Certifiable);
+  await deployer.deploy(Maintenance);
+  await deployer.deploy(Product);
+  await deployer.deploy(ProductionActivity);
+  await deployer.deploy(Storage);
+  await deployer.deploy(Portion, Storage.address);
+  await deployer.deploy(Land, Storage.address);
 };
