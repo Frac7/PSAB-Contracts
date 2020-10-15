@@ -38,6 +38,8 @@ contract Portion {
     
     /// @dev All the portions
     mapping (uint256 => Data) private portions;
+    /// @dev Portions grouped by land
+    mapping (uint256 => uint256[]) private portionsByLand;
     /// @dev Portions grouped by owner's address
     mapping (address => uint256[]) private portionsByOwner;
     /// @dev Portions grouped by buyer's address
@@ -91,6 +93,7 @@ contract Portion {
     /// @param _base64 Base64 encoded documents
     /// @param _source Original sender from divide land
     function register(uint256 _landId, string calldata _description, string calldata _documents, string calldata _base64, address _source) external {
+        portionsByLand[_landId].push(lastPortionId);
         portionTerms[lastPortionId].owner = _source;
         portionsByOwner[_source].push(lastPortionId);        
         buyersByPortions[lastPortionId].push(_source);
@@ -143,6 +146,12 @@ contract Portion {
     /// return the tuple containing the data related to the portion and its terms of sale
     function getById(uint256 _id) external view returns (Data memory, TermsOfSale memory) {
         return (portions[_id], portionTerms[_id]);
+    }
+
+    /// @param _land Land ID
+    /// return the array containing all the portions in a land
+    function getByLand(uint256 _land) external view returns (uint256[] memory) {
+        return (portionsByLand[_land]);
     }
     
     /// @param _owner Owner address

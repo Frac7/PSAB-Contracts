@@ -58,6 +58,16 @@ contract('Portion test', async (accounts) => {
         expect(buyers[2]).to.be.equal(accounts[3]);
     });
 
+    it('Should return all the portions for the given land', async () => {
+        const instance = await Portion.deployed();
+
+        const portions = await instance.getByLand(0, { from: accounts[1] });
+        expect(portions.length).to.be.equal(3);
+        expect(portions[0].toNumber()).to.be.equal(0);
+        expect(portions[1].toNumber()).to.be.equal(1);
+        expect(portions[2].toNumber()).to.be.equal(2);
+    });
+
     it('Should register a product', async () => {
         const instance = await Portion.deployed();
         const product = await Product.deployed();
