@@ -17,7 +17,7 @@ contract('Storage test', async (accounts) => {
         const instance = await Land.deployed();
         const storage = await Storage.deployed();
 
-        await instance.register('Land 0', 'Attachment', 'Attachment encoding', { from: accounts[1] });
+        await instance.register('Land 0', 'Attachment encoding', { from: accounts[1] });
 
         const hash = await storage.getById(1, { from: accounts[1] });
         expect(hash).not.to.be.equal(0);
@@ -27,7 +27,7 @@ contract('Storage test', async (accounts) => {
         const instance = await Portion.deployed();
         const storage = await Storage.deployed();
 
-        await instance.register(0, 'Portion 0', 'Attachment', 'Attachment encoding', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 0', 'Attachment encoding', { from: accounts[1] });
 
         const hash = await storage.getById(2, { from: accounts[1] });
         expect(hash).not.to.be.equal(0);

@@ -19,7 +19,6 @@ contract Portion {
     struct Data {
         uint256 land;
         string description;
-        string documents;
         uint256 hashId;
         bool hasValue;
     }
@@ -74,31 +73,32 @@ contract Portion {
     
     /// @param _landId Land to be divided
     /// @param _description Portion description
-    /// @param _documents Link of documents related to the portion
     /// @param _base64 Base64 encoded documents
-    function register(uint256 _landId, string calldata _description, string calldata _documents, string calldata _base64) external {
+    /// @return the hash of the document
+    function register(uint256 _landId, string calldata _description, string calldata _base64) external returns (bytes32) {
+        portionsByLand[_landId].push(lastPortionId);
+        
         portions[lastPortionId].description = _description;
-        portions[lastPortionId].documents = _documents;
         portions[lastPortionId].land = _landId;
         
         portions[lastPortionId].hashId = dataStorage.add(_base64);
         portions[lastPortionId].hasValue = true;
         
         lastPortionId++;
+
+        return dataStorage.getById(lastPortionId - 1);
     }
 
     /// @param _landId Land to be divided
     /// @param _description Portion description
-    /// @param _documents Link of documents related to the portion
     /// @param _base64 Base64 encoded documents
     /// @param _source Original sender from divide land
-    function register(uint256 _landId, string calldata _description, string calldata _documents, string calldata _base64, address _source) external {
-        portionsByLand[_landId].push(lastPortionId);
+    function register(uint256 _landId, string calldata _description, string calldata _base64, address _source) external {
         portionTerms[lastPortionId].owner = _source;
         portionsByOwner[_source].push(lastPortionId);        
         buyersByPortions[lastPortionId].push(_source);
 
-        this.register(_landId, _description, _documents, _base64);
+        this.register(_landId, _description, _base64);
     }
     
     /// @param _portionId ID of portion related
@@ -144,8 +144,8 @@ contract Portion {
     
     /// @param _id Portion ID
     /// return the tuple containing the data related to the portion and its terms of sale
-    function getById(uint256 _id) external view returns (Data memory, TermsOfSale memory) {
-        return (portions[_id], portionTerms[_id]);
+    function getById(uint256 _id) external view returns (Data memory, TermsOfSale memory, bytes32) {
+        return (portions[_id], portionTerms[_id], dataStorage.getById(_id));
     }
 
     /// @param _land Land ID

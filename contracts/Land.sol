@@ -17,7 +17,6 @@ contract Land {
     /// @dev Land data
     struct Data {
         string description;
-        string documents;
         uint256 hashId;
     }
     
@@ -45,33 +44,33 @@ contract Land {
     }
     
     /// @param _description Land description
-    /// @param _documents Documents link
     /// @param _base64 Documents base64 encoded for calculating hash
-    function register(string calldata _description, string calldata _documents, string calldata _base64) external {
+    /// @return the hash of the document
+    function register(string calldata _description, string calldata _base64) external returns (bytes32) {
         landsByOwner[msg.sender].push(lastLandId);
         ownersByLandId[lastLandId] = msg.sender;
         
         lands[lastLandId].description = _description;
-        lands[lastLandId].documents = _documents;
         lands[lastLandId].hashId = dataStorage.add(_base64);
         
         lastLandId++;
+
+        return dataStorage.getById(lastLandId - 1);
     }
     
     /// @dev Only owner can divide a land in portion. This method calls the Portion instance for registering a new portion starting from input data.
     /// @param _id Land ID to divide
     /// @param _description Portion description
-    /// @param _documents Documents link
     /// @param _base64 Documents base64 encoded for calculating hash
     /// @param _contractAddress Address of Portion contract    
-    function divide(uint256 _id, string calldata _description, string calldata _documents, string calldata _base64, address _contractAddress) external onlyOwner(_id) {
-        Portion(_contractAddress).register(_id, _description, _documents, _base64, msg.sender);
+    function divide(uint256 _id, string calldata _description, string calldata _base64, address _contractAddress) external onlyOwner(_id) {
+        Portion(_contractAddress).register(_id, _description, _base64, msg.sender);
     }
     
     /// @param _id Land ID
     /// @return the data of the land
-    function getById(uint256 _id) external view returns (Data memory) {
-        return lands[_id];
+    function getById(uint256 _id) external view returns (Data memory, bytes32) {
+        return (lands[_id], dataStorage.getById(_id));
     }
     
     /// @param _address Owner's address
