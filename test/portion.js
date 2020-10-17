@@ -17,13 +17,15 @@ contract('Portion test', async (accounts) => {
         assert.equal(1, total, 'There must be exactly 1 portion registered');
 
         const idByOwner = await instance.getByOwner(accounts[1], { from: accounts[1] });
-        assert.equal(0, idByOwner, 'Owner has only the portion with ID = 0');
+        assert.equal(1, idByOwner.length, 'Owner has exactly one portion');
+        assert.equal(0, idByOwner[0], 'Owner has only the portion with ID = 0');
     });
 
     it('Should define terms', async () => {
         const instance = await Portion.deployed();
 
         await instance.register(0, 'Portion 1', 'Attachment encoding', { from: accounts[1] });
+
         await truffleAssert.passes(
             instance.defineTerms(1, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, { from: accounts[1] }),
             'Owner must be able to define the contract terms for his portion'
