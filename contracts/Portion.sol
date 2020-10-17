@@ -86,7 +86,7 @@ contract Portion {
         
         lastPortionId++;
 
-        return dataStorage.getById(lastPortionId - 1);
+        return dataStorage.getById(portions[lastPortionId].hashId);
     }
 
     /// @param _landId Land to be divided

@@ -55,7 +55,7 @@ contract Land {
         
         lastLandId++;
 
-        return dataStorage.getById(lastLandId - 1);
+        return dataStorage.getById(lands[lastLandId].hashId);
     }
     
     /// @dev Only owner can divide a land in portion. This method calls the Portion instance for registering a new portion starting from input data.
