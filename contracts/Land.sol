@@ -46,7 +46,7 @@ contract Land {
     /// @param _description Land description
     /// @param _base64 Documents base64 encoded for calculating hash
     /// @return the hash of the document
-    function register(string calldata _description, string calldata _base64) external returns (bytes32) {
+    function register(string calldata _description, string calldata _base64) external returns (uint256) {
         landsByOwner[msg.sender].push(lastLandId);
         ownersByLandId[lastLandId] = msg.sender;
         
@@ -55,7 +55,7 @@ contract Land {
         
         lastLandId++;
 
-        return dataStorage.getById(lands[lastLandId].hashId);
+        return lands[lastLandId].hashId;
     }
     
     /// @dev Only owner can divide a land in portion. This method calls the Portion instance for registering a new portion starting from input data.

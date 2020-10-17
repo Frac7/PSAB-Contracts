@@ -75,7 +75,7 @@ contract Portion {
     /// @param _description Portion description
     /// @param _base64 Base64 encoded documents
     /// @return the hash of the document
-    function register(uint256 _landId, string calldata _description, string calldata _base64) external returns (bytes32) {
+    function register(uint256 _landId, string calldata _description, string calldata _base64) external returns (uint256) {
         portionsByLand[_landId].push(lastPortionId);
         
         portions[lastPortionId].description = _description;
@@ -86,7 +86,7 @@ contract Portion {
         
         lastPortionId++;
 
-        return dataStorage.getById(portions[lastPortionId].hashId);
+        return portions[lastPortionId].hashId;
     }
 
     /// @param _landId Land to be divided
