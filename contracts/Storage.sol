@@ -17,7 +17,7 @@ contract Storage {
     
     /// @param _item Base64 document
     /// @return the ID of the hash
-    function add(string memory _item) public returns(uint256) {
+    function add(bytes memory _item) public returns(uint256) {
         items[lastItemId] = keccak256(abi.encodePacked(_item));
         lastItemId++;
         
