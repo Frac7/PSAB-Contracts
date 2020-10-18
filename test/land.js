@@ -6,7 +6,7 @@ contract('Land test', async (accounts) => {
     it('Should register a land', async () => {
         const instance = await Land.deployed();
 
-        await instance.register('Land 0', 'Attachment', 'Attachment encoding', { from: accounts[1] });
+        await instance.register('Land 0', '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[1] });
         await truffleAssert.passes(
             instance.getById(0, { from: accounts[1] }),
             'Land must be registered'
@@ -25,13 +25,13 @@ contract('Land test', async (accounts) => {
         const instance = await Land.deployed();
         const portion = await Portion.deployed();
 
-        await instance.register('Land 1', 'Attachment', 'Attachment encoding', { from: accounts[1] });
+        await instance.register('Land 1', '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[1] });
         await truffleAssert.passes(
-            instance.divide(1, 'Portion 0', 'Attachment', 'Attachment encoding', portion.address, { from: accounts[1] }),
+            instance.divide(1, 'Portion 0', '0x4174746163686d656e74', 'Attachment encoding', portion.address, { from: accounts[1] }),
             'Owner must be able to divide his land in portions'
         );
         await truffleAssert.fails(
-            instance.divide(1, 'Portion 0', 'Attachment', 'Attachment encoding', portion.address, { from: accounts[0] }),
+            instance.divide(1, 'Portion 0', '0x4174746163686d656e74', 'Attachment encoding', portion.address, { from: accounts[0] }),
             'Only owner is allowed'
         );
     });

@@ -19,7 +19,7 @@ contract Portion {
     struct Data {
         uint256 land;
         string description;
-        bytes documents;
+        bytes32 documents;
         uint256 hashId;
         bool hasValue;
     }
@@ -76,7 +76,7 @@ contract Portion {
     /// @param _description Portion description
     /// @param _documents Link of documents related to the portion
     /// @param _base64 Base64 encoded documents
-    function register(uint256 _landId, string calldata _description, bytes calldata _documents, bytes calldata _base64) external {
+    function register(uint256 _landId, string calldata _description, bytes32 _documents, string calldata _base64) external {
         portions[lastPortionId].description = _description;
         portions[lastPortionId].documents = _documents;
         portions[lastPortionId].land = _landId;
@@ -92,7 +92,7 @@ contract Portion {
     /// @param _documents Link of documents related to the portion
     /// @param _base64 Base64 encoded documents
     /// @param _source Original sender from divide land
-    function register(uint256 _landId, string calldata _description, bytes calldata _documents, bytes calldata _base64, address _source) external {
+    function register(uint256 _landId, string calldata _description, bytes32 _documents, string calldata _base64, address _source) external {
         portionsByLand[_landId].push(lastPortionId);
         portionTerms[lastPortionId].owner = _source;
         portionsByOwner[_source].push(lastPortionId);        

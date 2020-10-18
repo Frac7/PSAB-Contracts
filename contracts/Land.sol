@@ -17,7 +17,7 @@ contract Land {
     /// @dev Land data
     struct Data {
         string description;
-        bytes documents;
+        bytes32 documents;
         uint256 hashId;
     }
     
@@ -47,7 +47,7 @@ contract Land {
     /// @param _description Land description
     /// @param _documents Documents link
     /// @param _base64 Documents base64 encoded for calculating hash
-    function register(string calldata _description, bytes calldata _documents, bytes calldata _base64) external {
+    function register(string calldata _description, bytes32 _documents, string calldata _base64) external {
         landsByOwner[msg.sender].push(lastLandId);
         ownersByLandId[lastLandId] = msg.sender;
         
@@ -64,7 +64,7 @@ contract Land {
     /// @param _documents Documents link
     /// @param _base64 Documents base64 encoded for calculating hash
     /// @param _contractAddress Address of Portion contract    
-    function divide(uint256 _id, string calldata _description, bytes calldata _documents, bytes calldata _base64, address _contractAddress) external onlyOwner(_id) {
+    function divide(uint256 _id, string calldata _description, bytes32 _documents, string calldata _base64, address _contractAddress) external onlyOwner(_id) {
         Portion(_contractAddress).register(_id, _description, _documents, _base64, msg.sender);
     }
     
