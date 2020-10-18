@@ -8,7 +8,7 @@ contract('Portion test', async (accounts) => {
     it('Should register a portion', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 0', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 0', accounts[1]);
         await truffleAssert.passes(
             instance.getById(0, { from: accounts[1] }),
             'Portion must be registered'
@@ -32,14 +32,14 @@ contract('Portion test', async (accounts) => {
             'Only owner is allowed'
         );
 
-        const land = await instance.getById(0, { from: accounts[1] });
-        assert.equal(lands.documents.length, 1, 'There is only one document for this portion');
+        const portion = await instance.getById(0, { from: accounts[1] });
+        assert.equal(portion[0].documents.length, 1, 'There is only one document for this portion');
     });
 
     it('Should define terms', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 1', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 1', accounts[1]);
         await truffleAssert.passes(
             instance.defineTerms(1, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, { from: accounts[1] }),
             'Owner must be able to define the contract terms for his portion'
@@ -53,7 +53,7 @@ contract('Portion test', async (accounts) => {
     it('Should sell his portion', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 2', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 2', accounts[1]);
         await truffleAssert.passes(
             instance.sell(2, accounts[2], { from: accounts[1] }),
             'Owner must be able to sell his portion'
@@ -129,7 +129,7 @@ contract('Portion test', async (accounts) => {
     it('Should remove buyer when ownership expires', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 3', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 3', accounts[1]);
         await instance.sell(3, accounts[2], { from: accounts[1] });
 
         const buyersByPortions = await instance.getBuyersByPortion(3);
@@ -149,7 +149,7 @@ contract('Portion test', async (accounts) => {
     it('Should not remove buyer when duration is perpetual', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 4', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 4', accounts[1]);
         await instance.sell(4, accounts[2], { from: accounts[1] });
 
         const buyersByPortions = await instance.getBuyersByPortion(4);

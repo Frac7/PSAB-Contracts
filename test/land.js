@@ -34,7 +34,7 @@ contract('Land test', async (accounts) => {
         );
 
         const land = await instance.getById(0, { from: accounts[1] });
-        assert.equal(lands.documents.length, 1, 'There is only one document for this land');
+        assert.equal(land.documents.length, 1, 'There is only one document for this land');
     });
 
     it('Should divide land', async () => {

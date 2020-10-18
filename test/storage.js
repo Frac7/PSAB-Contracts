@@ -28,7 +28,7 @@ contract('Storage test', async (accounts) => {
         const instance = await Portion.deployed();
         const storage = await Storage.deployed();
 
-        await instance.register(0, 'Portion 0', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 0', accounts[1]);
         await instance.registerDocument(0, '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[1] });
 
         const hash = await storage.getById(2, { from: accounts[1] });
