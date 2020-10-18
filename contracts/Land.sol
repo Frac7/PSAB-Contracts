@@ -17,8 +17,8 @@ contract Land {
     /// @dev Land data
     struct Data {
         string description;
-        bytes32 documents;
-        uint256 hashId;
+        bytes32[] documents;
+        uint256[] hashIds;
     }
     
     /// @dev All the lands
@@ -45,27 +45,29 @@ contract Land {
     }
     
     /// @param _description Land description
-    /// @param _documents Documents link
-    /// @param _base64 Documents base64 encoded for calculating hash
-    function register(string calldata _description, bytes32 _documents, string calldata _base64) external {
+    function register(string calldata _description) external {
         landsByOwner[msg.sender].push(lastLandId);
         ownersByLandId[lastLandId] = msg.sender;
         
         lands[lastLandId].description = _description;
-        lands[lastLandId].documents = _documents;
-        lands[lastLandId].hashId = dataStorage.add(_base64);
         
         lastLandId++;
+    }
+
+    /// @param _id Land ID
+    /// @param _document Document name
+    /// @param _base64 Base64 document
+    function registerDocument(uint256 _id, bytes32 _document, string calldata _base64) external onlyOwner(_id) {
+        lands[_id].documents.push(_document);
+        lands[_id].hashIds.push(dataStorage.add(_base64));
     }
     
     /// @dev Only owner can divide a land in portion. This method calls the Portion instance for registering a new portion starting from input data.
     /// @param _id Land ID to divide
     /// @param _description Portion description
-    /// @param _documents Documents link
-    /// @param _base64 Documents base64 encoded for calculating hash
     /// @param _contractAddress Address of Portion contract    
-    function divide(uint256 _id, string calldata _description, bytes32 _documents, string calldata _base64, address _contractAddress) external onlyOwner(_id) {
-        Portion(_contractAddress).register(_id, _description, _documents, _base64, msg.sender);
+    function divide(uint256 _id, string calldata _description, address _contractAddress) external onlyOwner(_id) {
+        Portion(_contractAddress).register(_id, _description, msg.sender);
     }
     
     /// @param _id Land ID
