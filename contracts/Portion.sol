@@ -6,7 +6,6 @@ pragma experimental ABIEncoderV2;
 //import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 import '@openzeppelin/contracts/math/SafeMath.sol';
 
-import './Storage.sol';
 import './Product.sol';
 import './Maintenance.sol';
 import './ProductionActivity.sol';
@@ -20,7 +19,7 @@ contract Portion {
         uint256 land;
         string description;
         bytes32[] documents;
-        uint256[] hashIds;
+        bytes32[] hashes;
         bool hasValue;
     }
     
@@ -51,14 +50,6 @@ contract Portion {
     
     /// @dev Portion counter
     uint256 private lastPortionId;
-    
-    /// @dev Storage contract instance
-    Storage private dataStorage;
-    
-    /// @param _dataStorage Storage contract address
-    constructor (address _dataStorage) public  {
-        dataStorage = Storage(_dataStorage);
-    }
     
     /// @dev Portion terms can be defined only by the portion owner
     modifier onlyOwner(uint256 _portionId) {
@@ -98,9 +89,9 @@ contract Portion {
     /// @param _id Portion ID
     /// @param _document Document name
     /// @param _base64 Base64 document
-    function registerDocument(uint256 _id, bytes32 _document, string calldata _base64) external onlyOwner(_id) {
+    function registerDocument(uint256 _id, bytes32 _document, bytes32 _base64) external onlyOwner(_id) {
         portions[_id].documents.push(_document);
-        portions[_id].hashIds.push(dataStorage.add(_base64));
+        portions[_id].hashes.push(_base64);
     }
     
     /// @param _portionId ID of portion related

@@ -25,11 +25,11 @@ contract('Land test', async (accounts) => {
         const instance = await Land.deployed();
 
         await truffleAssert.passes(
-            instance.registerDocument(0, '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[1] }),
+            instance.registerDocument(0, '0x4174746163686d656e74', '0x258b32d46b8847cf6b10cd1848aecd9b7295df31f095cdba015075e0e33beade', { from: accounts[1] }),
             'Owner must be able to register documents for his land'
         );
         await truffleAssert.fails(
-            instance.registerDocument(0, '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[0] }),
+            instance.registerDocument(0, '0x4174746163686d656e74', '0x258b32d46b8847cf6b10cd1848aecd9b7295df31f095cdba015075e0e33beade', { from: accounts[0] }),
             'Only owner is allowed'
         );
 

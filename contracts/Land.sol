@@ -6,7 +6,6 @@ pragma experimental ABIEncoderV2;
 //import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 import '@openzeppelin/contracts/math/SafeMath.sol';
 
-import './Storage.sol';
 import './Portion.sol';
 
 /// @title This contract represents a land/agricultural resource
@@ -18,7 +17,7 @@ contract Land {
     struct Data {
         string description;
         bytes32[] documents;
-        uint256[] hashIds;
+        bytes32[] hashes;
     }
     
     /// @dev All the lands
@@ -30,13 +29,6 @@ contract Land {
     
     /// @dev Lands counter
     uint256 private lastLandId;
-    /// @dev Document hashes storage contract
-    Storage private dataStorage;
-    
-    /// @param _dataStorage Address of storage contract
-    constructor (address _dataStorage) public {
-        dataStorage = Storage(_dataStorage);
-    }
     
     /// @dev Only owner can perform operation in his land
     modifier onlyOwner(uint256 _landId) {
@@ -57,9 +49,9 @@ contract Land {
     /// @param _id Land ID
     /// @param _document Document name
     /// @param _base64 Base64 document
-    function registerDocument(uint256 _id, bytes32 _document, string calldata _base64) external onlyOwner(_id) {
+    function registerDocument(uint256 _id, bytes32 _document, bytes32 _base64) external onlyOwner(_id) {
         lands[_id].documents.push(_document);
-        lands[_id].hashIds.push(dataStorage.add(_base64));
+        lands[_id].hashes.push(_base64);
     }
     
     /// @dev Only owner can divide a land in portion. This method calls the Portion instance for registering a new portion starting from input data.
