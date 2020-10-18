@@ -6,7 +6,6 @@ pragma experimental ABIEncoderV2;
 //import '../../OpenZeppelin/openzeppelin-contracts/contracts/math/SafeMath.sol';
 import '@openzeppelin/contracts/math/SafeMath.sol';
 
-import './Storage.sol';
 import './Product.sol';
 import './Maintenance.sol';
 import './ProductionActivity.sol';
@@ -19,8 +18,8 @@ contract Portion {
     struct Data {
         uint256 land;
         string description;
-        string documents;
-        uint256 hashId;
+        bytes32[] documents;
+        bytes32[] hashes;
         bool hasValue;
     }
     
@@ -52,14 +51,6 @@ contract Portion {
     /// @dev Portion counter
     uint256 private lastPortionId;
     
-    /// @dev Storage contract instance
-    Storage private dataStorage;
-    
-    /// @param _dataStorage Storage contract address
-    constructor (address _dataStorage) public  {
-        dataStorage = Storage(_dataStorage);
-    }
-    
     /// @dev Portion terms can be defined only by the portion owner
     modifier onlyOwner(uint256 _portionId) {
         require(portionTerms[_portionId].owner == msg.sender, 'Only owner is allowed');
@@ -74,14 +65,10 @@ contract Portion {
     
     /// @param _landId Land to be divided
     /// @param _description Portion description
-    /// @param _documents Link of documents related to the portion
-    /// @param _base64 Base64 encoded documents
-    function register(uint256 _landId, string calldata _description, string calldata _documents, string calldata _base64) external {
+    function register(uint256 _landId, string calldata _description) external {
         portions[lastPortionId].description = _description;
-        portions[lastPortionId].documents = _documents;
         portions[lastPortionId].land = _landId;
         
-        portions[lastPortionId].hashId = dataStorage.add(_base64);
         portions[lastPortionId].hasValue = true;
         
         lastPortionId++;
@@ -89,16 +76,22 @@ contract Portion {
 
     /// @param _landId Land to be divided
     /// @param _description Portion description
-    /// @param _documents Link of documents related to the portion
-    /// @param _base64 Base64 encoded documents
     /// @param _source Original sender from divide land
-    function register(uint256 _landId, string calldata _description, string calldata _documents, string calldata _base64, address _source) external {
+    function register(uint256 _landId, string calldata _description, address _source) external {
         portionsByLand[_landId].push(lastPortionId);
         portionTerms[lastPortionId].owner = _source;
         portionsByOwner[_source].push(lastPortionId);        
         buyersByPortions[lastPortionId].push(_source);
 
-        this.register(_landId, _description, _documents, _base64);
+        this.register(_landId, _description);
+    }
+
+    /// @param _id Portion ID
+    /// @param _document Document name
+    /// @param _base64 Base64 document
+    function registerDocument(uint256 _id, bytes32 _document, bytes32 _base64) external onlyOwner(_id) {
+        portions[_id].documents.push(_document);
+        portions[_id].hashes.push(_base64);
     }
     
     /// @param _portionId ID of portion related
