@@ -8,7 +8,7 @@ contract('Portion test', async (accounts) => {
     it('Should register a portion', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 0', '0x4174746163686d656e74', 'Attachment encoding', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 0', accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.getById(0, { from: accounts[1] }),
             'Portion must be registered'
@@ -20,10 +20,26 @@ contract('Portion test', async (accounts) => {
         assert.equal(0, idByOwner, 'Owner has only the portion with ID = 0');
     });
 
+    it('Should register documents', async () => {
+        const instance = await Portion.deployed();
+
+        await truffleAssert.passes(
+            instance.registerDocument(0, '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[1] }),
+            'Owner must be able to register documents for his portion'
+        );
+        await truffleAssert.fails(
+            instance.registerDocument(0, '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[0] }),
+            'Only owner is allowed'
+        );
+
+        const land = await instance.getById(0, { from: accounts[1] });
+        assert.equal(lands.documents.length, 1, 'There is only one document for this portion');
+    });
+
     it('Should define terms', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 1', '0x4174746163686d656e74', 'Attachment encoding', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 1', accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.defineTerms(1, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, { from: accounts[1] }),
             'Owner must be able to define the contract terms for his portion'
@@ -37,7 +53,7 @@ contract('Portion test', async (accounts) => {
     it('Should sell his portion', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 2', '0x4174746163686d656e74', 'Attachment encoding', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 2', accounts[1], { from: accounts[1] });
         await truffleAssert.passes(
             instance.sell(2, accounts[2], { from: accounts[1] }),
             'Owner must be able to sell his portion'
@@ -113,7 +129,7 @@ contract('Portion test', async (accounts) => {
     it('Should remove buyer when ownership expires', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 3', '0x4174746163686d656e74', 'Attachment encoding', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 3', accounts[1], { from: accounts[1] });
         await instance.sell(3, accounts[2], { from: accounts[1] });
 
         const buyersByPortions = await instance.getBuyersByPortion(3);
@@ -133,7 +149,7 @@ contract('Portion test', async (accounts) => {
     it('Should not remove buyer when duration is perpetual', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(0, 'Portion 4', '0x4174746163686d656e74', 'Attachment encoding', accounts[1], { from: accounts[1] });
+        await instance.register(0, 'Portion 4', accounts[1], { from: accounts[1] });
         await instance.sell(4, accounts[2], { from: accounts[1] });
 
         const buyersByPortions = await instance.getBuyersByPortion(4);
