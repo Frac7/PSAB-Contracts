@@ -6,7 +6,7 @@ contract('Land test', async (accounts) => {
     it('Should register a land', async () => {
         const instance = await Land.deployed();
 
-        await instance.register('Land 0', '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[1] });
+        await instance.register('Land 0', { from: accounts[1] });
         await truffleAssert.passes(
             instance.getById(0, { from: accounts[1] }),
             'Land must be registered'
@@ -21,17 +21,33 @@ contract('Land test', async (accounts) => {
         assert.equal(accounts[1], ownerById, 'The land with ID = 0 is owned by account1');
     });
 
+    it('Should register documents', async () => {
+        const instance = await Land.deployed();
+
+        await truffleAssert.passes(
+            instance.registerDocument(0, '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[1] }),
+            'Owner must be able to register documents for his land'
+        );
+        await truffleAssert.fails(
+            instance.registerDocument(0, '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[0] }),
+            'Only owner is allowed'
+        );
+
+        const land = await instance.getById(0, { from: accounts[1] });
+        assert.equal(lands.documents.length, 1, 'There is only one document for this land');
+    });
+
     it('Should divide land', async () => {
         const instance = await Land.deployed();
         const portion = await Portion.deployed();
 
-        await instance.register('Land 1', '0x4174746163686d656e74', 'Attachment encoding', { from: accounts[1] });
+        await instance.register('Land 1', { from: accounts[1] });
         await truffleAssert.passes(
-            instance.divide(1, 'Portion 0', '0x4174746163686d656e74', 'Attachment encoding', portion.address, { from: accounts[1] }),
+            instance.divide(1, 'Portion 0', portion.address, { from: accounts[1] }),
             'Owner must be able to divide his land in portions'
         );
         await truffleAssert.fails(
-            instance.divide(1, 'Portion 0', '0x4174746163686d656e74', 'Attachment encoding', portion.address, { from: accounts[0] }),
+            instance.divide(1, 'Portion 0', portion.address, { from: accounts[0] }),
             'Only owner is allowed'
         );
     });
