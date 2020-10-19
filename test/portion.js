@@ -165,4 +165,27 @@ contract('Portion test', async (accounts) => {
         const portionData = await instance.getById(4, { from: accounts[1] });
         expect(portionData[1].buyer).to.be.equal(accounts[2]);
     });
+
+    it('Should not remove buyer when element does not exist', async () => {
+        const instance = await Portion.deployed();
+
+        await truffleAssert.reverts(
+            instance.ownershipExpiration(5),
+            'Element does not exist'
+        );
+    });
+
+    it('Should not remove buyer when buyer is not set', async () => {
+        const instance = await Portion.deployed();
+
+        await instance.register(0, 'Portion 5', accounts[1]);
+
+        await truffleAssert.reverts(
+            instance.ownershipExpiration(5),
+            'Buyer is not set'
+        );
+
+        const portionData = await instance.getById(4, { from: accounts[1] });
+        expect(portionData[1].buyer).to.be.equal(accounts[2]);
+    });
 });
