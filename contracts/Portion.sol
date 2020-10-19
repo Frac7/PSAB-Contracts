@@ -131,8 +131,8 @@ contract Portion {
     /// @param _id Portion ID
     function ownershipExpiration(uint256 _id) external {
         if (!portions[_id].hasValue) revert('Element does not exist');
-        if (portionTerms[_id].duration == 0 || now < portionTerms[_id].duration) revert('Owneship expiration not allowed');
         if (portionTerms[_id].buyer == address(0)) revert('Buyer is not set');
+        if (portionTerms[_id].duration == 0 || now < portionTerms[_id].duration) revert('Owneship expiration not allowed');
         portionTerms[_id].buyer = address(0);
     }
     
