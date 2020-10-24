@@ -65,7 +65,7 @@ contract Portion {
     
     /// @param _landId Land to be divided
     /// @param _description Portion description
-    function register(uint256 _landId, string calldata _description) private {
+    function register(uint256 _landId, string calldata _description) public {
         portions[lastPortionId + 1].description = portions[lastPortionId].description = _description;
         portions[lastPortionId + 1].land = portions[lastPortionId].land = _landId;
         
@@ -78,11 +78,13 @@ contract Portion {
     /// @param _description Portion description
     /// @param _source Original sender from divide land
     function register(uint256 _landId, string calldata _description, address _source) public {
-        if (portionsByLand[_land].length == 2) revert ('Portion cannot be created');
+        if (portionsByLand[_landId].length == 2) revert ('Portion cannot be created');
 
-        portionsByLand[_landId].push(lastPortionId, lastPortionId + 1);
+        portionsByLand[_landId].push(lastPortionId);
+        portionsByLand[_landId].push(lastPortionId + 1);
         portionTerms[lastPortionId + 1].owner = portionTerms[lastPortionId].owner = _source;
-        portionsByOwner[_source].push(lastPortionId, lastPortionId + 1);
+        portionsByOwner[_source].push(lastPortionId);
+        portionsByOwner[_source].push(lastPortionId + 1);
 
         this.register(_landId, _description);
     }
@@ -120,14 +122,16 @@ contract Portion {
         portionTerms[_portionId].expectedMaintenanceCost = _expectedMaintenanceCost;
         portionTerms[_portionId].expectedProdActivityCost = _expectedProdActivityCost;
 
-        this.sell(_id, _buyer, msg.sender);
+        this.sell(_portionId, _buyer, msg.sender);
     }
 
     /// @notice Sell and transfer ownership
     /// @param _id Portion ID
     /// @param _buyer New buyer
     /// @param _source Sender
-    function sell(uint256 _id, address _buyer, address _source) private onlyOwnerAndBuyer(_id) {
+    function sell(uint256 _id, address _buyer, address _source) public {
+        if (!(portionTerms[_id].owner == _source || portionTerms[_id].buyer == _source)) revert ('Only owner or buyer are allowed');
+
         portionTerms[_id].buyer = _buyer;
         portionsByBuyer[_buyer].push(_id);
         

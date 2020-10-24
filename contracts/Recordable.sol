@@ -29,7 +29,7 @@ contract Recordable {
 
     /// @param _description Item description
     /// @param _id Related portion ID
-    function register(string calldata _description, uint256 _id) private {
+    function register(string calldata _description, uint256 _id) public {
         items[lastId].description = _description;
         items[lastId].portion = _id;
         

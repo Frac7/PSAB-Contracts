@@ -60,7 +60,7 @@ contract Land {
     /// @param _description Portion description
     /// @param _contractAddress Address of Portion contract    
     function divide(uint256 _id, string calldata _description, address _contractAddress) external onlyOwner(_id) {
-        if (lands[_id].divide) revert('Land cannot be divided further');
+        if (lands[_id].divided) revert('Land cannot be divided further');
         Portion(_contractAddress).register(_id, _description, msg.sender);
         lands[_id].divided = true;
     }
