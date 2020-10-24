@@ -51,7 +51,7 @@ contract('Land test', async (accounts) => {
             'Only owner is allowed'
         );
         await truffleAssert.fails(
-            instance.divide(1, 'Portion 2', portion.address, { from: accounts[0] }),
+            instance.divide(1, 'Portion 2', portion.address, { from: accounts[1] }),
             'Land cannot be divided further'
         );
     });
