@@ -18,6 +18,7 @@ contract Land {
         string description;
         bytes32[] documents;
         bytes32[] hashes;
+        bool divided;
     }
     
     /// @dev All the lands
@@ -59,7 +60,9 @@ contract Land {
     /// @param _description Portion description
     /// @param _contractAddress Address of Portion contract    
     function divide(uint256 _id, string calldata _description, address _contractAddress) external onlyOwner(_id) {
+        if (lands[_id].divide) revert('Land cannot be divided further');
         Portion(_contractAddress).register(_id, _description, msg.sender);
+        lands[_id].divided = true;
     }
     
     /// @param _id Land ID

@@ -65,23 +65,27 @@ contract Portion {
     
     /// @param _landId Land to be divided
     /// @param _description Portion description
-    function register(uint256 _landId, string calldata _description) external {
-        portions[lastPortionId].description = _description;
-        portions[lastPortionId].land = _landId;
+    function register(uint256 _landId, string calldata _description) private {
+        portions[lastPortionId + 1].description = portions[lastPortionId].description = _description;
+        portions[lastPortionId + 1].land = portions[lastPortionId].land = _landId;
         
-        portions[lastPortionId].hasValue = true;
+        portions[lastPortionId + 1].hasValue = portions[lastPortionId].hasValue = true;
         
-        lastPortionId++;
+        lastPortionId += 2;
     }
 
     /// @param _landId Land to be divided
     /// @param _description Portion description
     /// @param _source Original sender from divide land
     function register(uint256 _landId, string calldata _description, address _source) external {
-        portionsByLand[_landId].push(lastPortionId);
-        portionTerms[lastPortionId].owner = _source;
-        portionsByOwner[_source].push(lastPortionId);        
+        portionsByLand[_landId].push(lastPortionId, lastPortionId + 1);
+
+        portionTerms[lastPortionId + 1].owner = portionTerms[lastPortionId].owner = _source;
+
+        portionsByOwner[_source].push(lastPortionId, lastPortionId + 1);
+
         buyersByPortions[lastPortionId].push(_source);
+        buyersByPortions[lastPortionId + 1].push(_source);
 
         this.register(_landId, _description);
     }
@@ -101,6 +105,7 @@ contract Portion {
     /// @param _periodicity Production periodicity
     /// @param _expectedMaintenanceCost Costs expected for maintenance
     /// @param _expectedProdActivityCost Costs expected for production-related activities 
+    /// @param _buyer New buyer
     function defineTerms(
         uint256 _portionId,
         uint256 _price,
@@ -108,7 +113,8 @@ contract Portion {
         string calldata _expectedProduction,
         string calldata _periodicity,
         uint256 _expectedMaintenanceCost,
-        uint256 _expectedProdActivityCost
+        uint256 _expectedProdActivityCost,
+        address _buyer
     ) external onlyOwner(_portionId) {
         portionTerms[_portionId].price = _price;
         portionTerms[_portionId].duration = _duration;
@@ -116,16 +122,26 @@ contract Portion {
         portionTerms[_portionId].periodicity = _periodicity;
         portionTerms[_portionId].expectedMaintenanceCost = _expectedMaintenanceCost;
         portionTerms[_portionId].expectedProdActivityCost = _expectedProdActivityCost;
+
+        this.sell(_id, _buyer, msg.sender);
+    }
+
+    /// @notice Sell and transfer ownership
+    /// @param _id Portion ID
+    /// @param _buyer New buyer
+    /// @param _source Sender
+    function sell(uint256 _id, address _buyer, address _source) private onlyOwnerAndBuyer(_id) {
+        portionTerms[_id].buyer = _buyer;
+        portionsByBuyer[_buyer].push(_id);
+        
+        buyersByPortions[_id].push(_buyer);
     }
     
     /// @notice Sell and transfer ownership
     /// @param _id Portion ID
     /// @param _buyer New buyer
     function sell(uint256 _id, address _buyer) external onlyOwnerAndBuyer(_id) {
-        portionTerms[_id].buyer = _buyer;
-        portionsByBuyer[_buyer].push(_id);
-        
-        buyersByPortions[_id].push(_buyer);
+        this.sell(_id, _buyer, msg.sender);
     }
     
     /// @param _id Portion ID
