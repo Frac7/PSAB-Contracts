@@ -77,15 +77,12 @@ contract Portion {
     /// @param _landId Land to be divided
     /// @param _description Portion description
     /// @param _source Original sender from divide land
-    function register(uint256 _landId, string calldata _description, address _source) external {
+    function register(uint256 _landId, string calldata _description, address _source) public {
+        if (portionsByLand[_land].length == 2) revert ('Portion cannot be created');
+
         portionsByLand[_landId].push(lastPortionId, lastPortionId + 1);
-
         portionTerms[lastPortionId + 1].owner = portionTerms[lastPortionId].owner = _source;
-
         portionsByOwner[_source].push(lastPortionId, lastPortionId + 1);
-
-        buyersByPortions[lastPortionId].push(_source);
-        buyersByPortions[lastPortionId + 1].push(_source);
 
         this.register(_landId, _description);
     }
