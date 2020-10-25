@@ -150,32 +150,43 @@ contract Portion {
         if (!(portionTerms[_id].owner == _source || portionTerms[_id].buyer == _source)) revert ('Only owner or buyer are allowed');
 
         if (portionTerms[_id].duration != 0) {
+            // If the portion was already sold
+            if (portionTerms[_id].buyer != address(0)) {
+                if (portionsByBuyer[portionTerms[_id].buyer].length != 1 && portionBuyerIndexByPortion[_id] != portionsByBuyer[portionTerms[_id].buyer].length - 1) {
+                    // The portion is removed from the old buyers's array
+                    portionsByBuyer[portionTerms[_id].buyer][portionBuyerIndexByPortion[_id]] = portionsByBuyer[portionTerms[_id].buyer][portionsByBuyer[portionTerms[_id].buyer].length - 1];
+                }
+                portionsByBuyer[portionTerms[_id].buyer].pop();
+            }
+
+            // Update buyer
             portionTerms[_id].buyer = _buyer;
             portionsByBuyer[_buyer].push(_id);
             buyersByPortions[_id].push(_buyer);
-
-            if (portionsByOwner[_source].length != 1) {
-                // The portion is removed from the old buyers's array
-                portionsByBuyer[_buyer][portionBuyerIndexByPortion[_id]] = portionsByBuyer[_buyer][portionsByBuyer[_buyer].length - 1];
-            }
-            delete portionsByBuyer[_buyer][portionsByBuyer[_buyer].length - 1];
 
             // Update the support variable
             portionBuyerIndexByPortion[_id] = portionsByBuyer[_buyer].length - 1;
 
         } else {
+
+            if (portionsByOwner[portionTerms[_id].owner].length != 1 && portionOwnerIndexByPortion[_id] != portionsByOwner[portionTerms[_id].owner].length - 1) {
+                // The portion is removed from the old owner's array
+                portionsByOwner[portionTerms[_id].owner][portionOwnerIndexByPortion[_id]] = portionsByOwner[portionTerms[_id].owner][portionsByOwner[portionTerms[_id].owner].length - 1];
+            }
+            portionsByOwner[portionTerms[_id].owner].pop();
+
+            // Update owner
             portionTerms[_id].owner = _buyer;
             portionsByOwner[_buyer].push(_id);
 
-            if (portionsByOwner[_source].length != 1) {
-                // The portion is removed from the old owner's array
-                portionsByOwner[_source][portionOwnerIndexByPortion[_id]] = portionsByOwner[_source][portionsByOwner[_source].length - 1];
-            }
-            delete portionsByOwner[_source][portionsByOwner[_source].length - 1];
-
             // Update the support variable
             portionOwnerIndexByPortion[_id] = portionsByOwner[_buyer].length - 1;
-        }       
+        }      
+    }
+
+    // TODO: remove
+    function getPortionBuyerIndexByPortion(uint256 _id) external view returns (uint256) {
+        return portionBuyerIndexByPortion[_id];
     }
     
     /// @notice Sell and transfer ownership

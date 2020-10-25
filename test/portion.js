@@ -21,7 +21,7 @@ contract('Portion test', async (accounts) => {
         assert.equal(1, idByOwner[1].toNumber(), 'Owner has only the portion with ID = 0 and ID = 1');
 
         await truffleAssert.fails(
-            instance.register(0, 'Portion 1', accounts[1], { from: accounts[1] }),
+            instance.register(0, 'Portion 1', accounts[1]),
             'Portion cannot be created'
         );
     });
@@ -54,6 +54,12 @@ contract('Portion test', async (accounts) => {
             instance.defineTerms(2, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[0] }),
             'Only owner is allowed'
         );
+
+        const portions = await instance.getByBuyer(accounts[2], { from: accounts[1] });
+        expect(portions[0].toNumber()).to.be.equal(2);
+
+        const buyers = await instance.getBuyersByPortion(2, { from: accounts[1] });
+        expect(buyers[0]).to.be.equal(accounts[2]);
     });
 
     it('Should sell his portion', async () => {
@@ -63,23 +69,42 @@ contract('Portion test', async (accounts) => {
         await instance.defineTerms(4, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[1] });
 
         await truffleAssert.passes(
-            instance.sell(4, accounts[2], accounts[1], { from: accounts[1] }),
+            instance.sell(4, accounts[3], accounts[1], { from: accounts[1] }),
             'Owner must be able to sell his portion'
-        );
-        await truffleAssert.passes(
-            instance.sell(4, accounts[3], accounts[2], { from: accounts[2] }),
-            'Buyer must be able to sell this portion'
-        );
-        await truffleAssert.fails(
-            instance.sell(4, accounts[2], accounts[0], { from: accounts[0] }),
-            'Only owner or buyer are allowed'
         );
 
         const portions = await instance.getByBuyer(accounts[3], { from: accounts[1] });
         expect(portions[0].toNumber()).to.be.equal(4);
 
         const buyers = await instance.getBuyersByPortion(4, { from: accounts[1] });
-        expect(buyers[2]).to.be.equal(accounts[3]);
+        expect(buyers[1]).to.be.equal(accounts[3]);
+
+        await truffleAssert.passes(
+            instance.sell(4, accounts[4], accounts[3], { from: accounts[3] }),
+            'Buyer must be able to sell this portion'
+        );
+        await truffleAssert.fails(
+            instance.sell(4, accounts[2], accounts[0], { from: accounts[0] }),
+            'Only owner or buyer are allowed'
+        );
+    });
+
+    it('Should change owner', async () => {
+        const instance = await Portion.deployed();
+
+        await instance.defineTerms(5, 42, 0, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[1] });
+
+        await truffleAssert.fails(
+            instance.sell(5, accounts[3], accounts[1], { from: accounts[1] }),
+            'Only owner or buyer are allowed'
+        );
+
+        const portions = await instance.getByOwner(accounts[2], { from: accounts[1] });
+        expect(portions[0].toNumber()).to.be.equal(5);
+
+        const buyers = await instance.getBuyersByPortion(5, { from: accounts[1] });
+        expect(buyers.length).to.be.equal(0);
+
     });
 
     it('Should return all the portions for the given land', async () => {
