@@ -46,7 +46,12 @@ contract Portion {
     /// @dev All the portion terms
     mapping (uint256 => TermsOfSale) private portionTerms;
     /// @dev Buyers grouped by portion
-    mapping (uint256 => address[]) buyersByPortions;
+    mapping (uint256 => address[]) private buyersByPortions;
+
+    /// @dev This is a mapping that contains, for each portion (key) the index corresponding in the portionsByOwner[address] array
+    // This can be useful when the contract is perpetual and the old owner must be replaced by the new buyer.
+    mapping (uint256 => uint256) private portionOwnerIndexByPortion;
+    // There is only one owner for portion.
     
     /// @dev Portion counter
     uint256 private lastPortionId;
@@ -82,9 +87,14 @@ contract Portion {
 
         portionsByLand[_landId].push(lastPortionId);
         portionsByLand[_landId].push(lastPortionId + 1);
+
         portionTerms[lastPortionId + 1].owner = portionTerms[lastPortionId].owner = _source;
+
         portionsByOwner[_source].push(lastPortionId);
         portionsByOwner[_source].push(lastPortionId + 1);
+
+        portionOwnerIndexByPortion[lastPortionId] = portionsByOwner[_source].length - 2;
+        portionOwnerIndexByPortion[lastPortionId + 1] = portionsByOwner[_source].length - 1;
 
         this.register(_landId, _description);
     }
@@ -138,6 +148,16 @@ contract Portion {
             buyersByPortions[_id].push(_buyer);
         } else {
             portionTerms[_id].owner = _buyer;
+            portionsByOwner[_buyer].push(_id);
+
+            if (portionsByOwner[_source].length != 1) {
+                // The portion is removed from the old owner's array
+                portionsByOwner[_source][portionOwnerIndexByPortion[_id]] = portionsByOwner[_source][portionsByOwner[_source].length - 1];
+            }
+            delete portionsByOwner[_source][portionsByOwner[_source].length - 1];
+
+            // Update the support variable
+            portionOwnerIndexByPortion[_id] = portionsByOwner[_buyer].length - 1;
         }       
     }
     
