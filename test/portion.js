@@ -60,6 +60,8 @@ contract('Portion test', async (accounts) => {
         const instance = await Portion.deployed();
 
         await instance.register(2, 'Portion 4', accounts[1]);
+        await instance.defineTerms(4, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[1] });
+
         await truffleAssert.passes(
             instance.sell(4, accounts[2], accounts[1], { from: accounts[1] }),
             'Owner must be able to sell his portion'
@@ -77,7 +79,7 @@ contract('Portion test', async (accounts) => {
         expect(portions[0].toNumber()).to.be.equal(4);
 
         const buyers = await instance.getBuyersByPortion(4, { from: accounts[1] });
-        expect(buyers[1]).to.be.equal(accounts[3]);
+        expect(buyers[2]).to.be.equal(accounts[3]);
     });
 
     it('Should return all the portions for the given land', async () => {
@@ -136,6 +138,7 @@ contract('Portion test', async (accounts) => {
         const instance = await Portion.deployed();
 
         await instance.register(3, 'Portion 6', accounts[1]);
+        await instance.defineTerms(6, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[1] });
         await instance.sell(6, accounts[2], accounts[1], { from: accounts[1] });
 
         const buyersByPortions = await instance.getBuyersByPortion(6);
@@ -156,6 +159,7 @@ contract('Portion test', async (accounts) => {
         const instance = await Portion.deployed();
 
         await instance.register(4, 'Portion 8', accounts[1]);
+        await instance.defineTerms(8, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[1] });
         await instance.sell(8, accounts[2], accounts[1], { from: accounts[1] });
 
         const buyersByPortions = await instance.getBuyersByPortion(8);

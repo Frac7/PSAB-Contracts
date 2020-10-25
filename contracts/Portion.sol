@@ -132,10 +132,13 @@ contract Portion {
     function sell(uint256 _id, address _buyer, address _source) public {
         if (!(portionTerms[_id].owner == _source || portionTerms[_id].buyer == _source)) revert ('Only owner or buyer are allowed');
 
-        portionTerms[_id].buyer = _buyer;
-        portionsByBuyer[_buyer].push(_id);
-        
-        buyersByPortions[_id].push(_buyer);
+        if (portionTerms[_id].duration != 0) {
+            portionTerms[_id].buyer = _buyer;
+            portionsByBuyer[_buyer].push(_id);
+            buyersByPortions[_id].push(_buyer);
+        } else {
+            portionTerms[_id].owner = _buyer;
+        }       
     }
     
     /// @notice Sell and transfer ownership
