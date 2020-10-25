@@ -183,11 +183,6 @@ contract Portion {
             portionOwnerIndexByPortion[_id] = portionsByOwner[_buyer].length - 1;
         }      
     }
-
-    // TODO: remove
-    function getPortionBuyerIndexByPortion(uint256 _id) external view returns (uint256) {
-        return portionBuyerIndexByPortion[_id];
-    }
     
     /// @notice Sell and transfer ownership
     /// @param _id Portion ID
