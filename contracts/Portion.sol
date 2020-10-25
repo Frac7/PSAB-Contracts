@@ -45,12 +45,19 @@ contract Portion {
     mapping (address => uint256[]) private portionsByBuyer;
     /// @dev All the portion terms
     mapping (uint256 => TermsOfSale) private portionTerms;
+
     /// @dev Buyers grouped by portion
     mapping (uint256 => address[]) private buyersByPortions;
+    // Useful for showing history
 
     /// @dev This is a mapping that contains, for each portion (key) the index corresponding in the portionsByOwner[address] array
     // This can be useful when the contract is perpetual and the old owner must be replaced by the new buyer.
     mapping (uint256 => uint256) private portionOwnerIndexByPortion;
+    // There is only one owner for portion.
+
+    /// @dev This is a mapping that contains, for each portion (key) the index corresponding in the portionsByBuyer[address] array
+    // This can be useful when the portion is sold and the old buyer must be replaced by the new buyer.
+    mapping (uint256 => uint256) private portionBuyerIndexByPortion;
     // There is only one owner for portion.
     
     /// @dev Portion counter
@@ -146,6 +153,16 @@ contract Portion {
             portionTerms[_id].buyer = _buyer;
             portionsByBuyer[_buyer].push(_id);
             buyersByPortions[_id].push(_buyer);
+
+            if (portionsByOwner[_source].length != 1) {
+                // The portion is removed from the old buyers's array
+                portionsByBuyer[_buyer][portionBuyerIndexByPortion[_id]] = portionsByBuyer[_buyer][portionsByBuyer[_buyer].length - 1];
+            }
+            delete portionsByBuyer[_buyer][portionsByBuyer[_buyer].length - 1];
+
+            // Update the support variable
+            portionBuyerIndexByPortion[_id] = portionsByBuyer[_buyer].length - 1;
+
         } else {
             portionTerms[_id].owner = _buyer;
             portionsByOwner[_buyer].push(_id);
