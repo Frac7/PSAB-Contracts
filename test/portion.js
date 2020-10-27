@@ -163,13 +163,10 @@ contract('Portion test', async (accounts) => {
         const instance = await Portion.deployed();
 
         await instance.register(3, 'Portion 6', accounts[1]);
-        await instance.defineTerms(6, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[1] });
-        await instance.sell(6, accounts[2], accounts[1], { from: accounts[1] });
+        await instance.defineTerms(6, 42, 1, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[1] });
 
         const buyersByPortions = await instance.getBuyersByPortion(6);
         expect(buyersByPortions.includes(accounts[2])).to.be.true;
-        
-        await instance.defineTerms(6, 42, 1, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[1] });
 
         await truffleAssert.passes(
             instance.ownershipExpiration(6),
@@ -178,19 +175,19 @@ contract('Portion test', async (accounts) => {
 
         const portionData = await instance.getById(6, { from: accounts[1] });
         expect(portionData[1].buyer).to.be.equal('0x0000000000000000000000000000000000000000');
+
+        const portions = await instance.getByBuyer(accounts[2], { from: accounts[1] });
+        expect(!portions.includes(6)).to.be.true;
     });
 
     it('Should not remove buyer when duration is perpetual', async () => {
         const instance = await Portion.deployed();
 
-        await instance.register(4, 'Portion 8', accounts[1]);
-        await instance.defineTerms(8, 42, 1604102400, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[1] });
-        await instance.sell(8, accounts[2], accounts[1], { from: accounts[1] });
-
-        const buyersByPortions = await instance.getBuyersByPortion(8);
-        expect(buyersByPortions.includes(accounts[2])).to.be.true;
-        
+        await instance.register(4, 'Portion 8', accounts[1]);        
         await instance.defineTerms(8, 42, 0, 'Expected production', 'Periodicity', 42, 42, accounts[2], { from: accounts[1] });
+
+        const portions = await instance.getByOwner(accounts[2]);
+        expect(portions[1].toNumber()).to.be.equal(8);
 
         await truffleAssert.reverts(
             instance.ownershipExpiration(8),
@@ -198,7 +195,7 @@ contract('Portion test', async (accounts) => {
         );
 
         const portionData = await instance.getById(8, { from: accounts[1] });
-        expect(portionData[1].buyer).to.be.equal(accounts[2]);
+        expect(portionData[1].owner).to.be.equal(accounts[2]);
     });
 
     it('Should not remove buyer when element does not exist', async () => {
@@ -217,7 +214,7 @@ contract('Portion test', async (accounts) => {
 
         await truffleAssert.reverts(
             instance.ownershipExpiration(10),
-            'Buyer is not set'
+            'Owneship expiration not allowed'
         );
     });
 });

@@ -188,15 +188,24 @@ contract Portion {
     /// @param _id Portion ID
     /// @param _buyer New buyer
     function sell(uint256 _id, address _buyer) external onlyOwnerAndBuyer(_id) {
+        if (_buyer == portionTerms[_id].buyer || _buyer == portionTerms[_id].owner) revert('Address not valid for this operation');
+        
         this.sell(_id, _buyer, msg.sender);
     }
     
     /// @param _id Portion ID
     function ownershipExpiration(uint256 _id) external {
         if (!portions[_id].hasValue) revert('Element does not exist');
-        if (portionTerms[_id].buyer == address(0)) revert('Buyer is not set');
         if (portionTerms[_id].duration == 0 || now < portionTerms[_id].duration) revert('Owneship expiration not allowed');
+        if (portionTerms[_id].buyer == address(0)) revert('Buyer is not set');
+
+        if (portionsByBuyer[portionTerms[_id].buyer].length != 1 && portionBuyerIndexByPortion[_id] != portionsByBuyer[portionTerms[_id].buyer].length - 1) {
+            // The portion is removed from the old buyers's array
+            portionsByBuyer[portionTerms[_id].buyer][portionBuyerIndexByPortion[_id]] = portionsByBuyer[portionTerms[_id].buyer][portionsByBuyer[portionTerms[_id].buyer].length - 1];
+        }
+        portionsByBuyer[portionTerms[_id].buyer].pop();
         portionTerms[_id].buyer = address(0);
+
     }
     
     /// @param _id Portion ID
