@@ -45,8 +45,20 @@ contract Portion {
     mapping (address => uint256[]) private portionsByBuyer;
     /// @dev All the portion terms
     mapping (uint256 => TermsOfSale) private portionTerms;
+
     /// @dev Buyers grouped by portion
-    mapping (uint256 => address[]) buyersByPortions;
+    mapping (uint256 => address[]) private buyersByPortions;
+    // Useful for showing history
+
+    /// @dev This is a mapping that contains, for each portion (key) the index corresponding in the portionsByOwner[address] array
+    // This can be useful when the contract is perpetual and the old owner must be replaced by the new buyer.
+    mapping (uint256 => uint256) private portionOwnerIndexByPortion;
+    // There is only one owner for portion.
+
+    /// @dev This is a mapping that contains, for each portion (key) the index corresponding in the portionsByBuyer[address] array
+    // This can be useful when the portion is sold and the old buyer must be replaced by the new buyer.
+    mapping (uint256 => uint256) private portionBuyerIndexByPortion;
+    // There is only one owner for portion.
     
     /// @dev Portion counter
     uint256 private lastPortionId;
@@ -65,23 +77,31 @@ contract Portion {
     
     /// @param _landId Land to be divided
     /// @param _description Portion description
-    function register(uint256 _landId, string calldata _description) external {
-        portions[lastPortionId].description = _description;
-        portions[lastPortionId].land = _landId;
+    function register(uint256 _landId, string calldata _description) public {
+        portions[lastPortionId + 1].description = portions[lastPortionId].description = _description;
+        portions[lastPortionId + 1].land = portions[lastPortionId].land = _landId;
         
-        portions[lastPortionId].hasValue = true;
+        portions[lastPortionId + 1].hasValue = portions[lastPortionId].hasValue = true;
         
-        lastPortionId++;
+        lastPortionId += 2;
     }
 
     /// @param _landId Land to be divided
     /// @param _description Portion description
     /// @param _source Original sender from divide land
-    function register(uint256 _landId, string calldata _description, address _source) external {
+    function register(uint256 _landId, string calldata _description, address _source) public {
+        if (portionsByLand[_landId].length == 2) revert ('Portion cannot be created');
+
         portionsByLand[_landId].push(lastPortionId);
-        portionTerms[lastPortionId].owner = _source;
-        portionsByOwner[_source].push(lastPortionId);        
-        buyersByPortions[lastPortionId].push(_source);
+        portionsByLand[_landId].push(lastPortionId + 1);
+
+        portionTerms[lastPortionId + 1].owner = portionTerms[lastPortionId].owner = _source;
+
+        portionsByOwner[_source].push(lastPortionId);
+        portionsByOwner[_source].push(lastPortionId + 1);
+
+        portionOwnerIndexByPortion[lastPortionId] = portionsByOwner[_source].length - 2;
+        portionOwnerIndexByPortion[lastPortionId + 1] = portionsByOwner[_source].length - 1;
 
         this.register(_landId, _description);
     }
@@ -101,6 +121,7 @@ contract Portion {
     /// @param _periodicity Production periodicity
     /// @param _expectedMaintenanceCost Costs expected for maintenance
     /// @param _expectedProdActivityCost Costs expected for production-related activities 
+    /// @param _buyer New buyer
     function defineTerms(
         uint256 _portionId,
         uint256 _price,
@@ -108,7 +129,8 @@ contract Portion {
         string calldata _expectedProduction,
         string calldata _periodicity,
         uint256 _expectedMaintenanceCost,
-        uint256 _expectedProdActivityCost
+        uint256 _expectedProdActivityCost,
+        address _buyer
     ) external onlyOwner(_portionId) {
         portionTerms[_portionId].price = _price;
         portionTerms[_portionId].duration = _duration;
@@ -116,16 +138,57 @@ contract Portion {
         portionTerms[_portionId].periodicity = _periodicity;
         portionTerms[_portionId].expectedMaintenanceCost = _expectedMaintenanceCost;
         portionTerms[_portionId].expectedProdActivityCost = _expectedProdActivityCost;
+
+        this.sell(_portionId, _buyer, msg.sender);
+    }
+
+    /// @notice Sell and transfer ownership
+    /// @param _id Portion ID
+    /// @param _buyer New buyer
+    /// @param _source Sender
+    function sell(uint256 _id, address _buyer, address _source) public {
+        if (!(portionTerms[_id].owner == _source || portionTerms[_id].buyer == _source)) revert ('Only owner or buyer are allowed');
+
+        if (portionTerms[_id].duration != 0) {
+            // If the portion was already sold
+            if (portionTerms[_id].buyer != address(0)) {
+                if (portionsByBuyer[portionTerms[_id].buyer].length != 1 && portionBuyerIndexByPortion[_id] != portionsByBuyer[portionTerms[_id].buyer].length - 1) {
+                    // The portion is removed from the old buyers's array
+                    portionsByBuyer[portionTerms[_id].buyer][portionBuyerIndexByPortion[_id]] = portionsByBuyer[portionTerms[_id].buyer][portionsByBuyer[portionTerms[_id].buyer].length - 1];
+                }
+                portionsByBuyer[portionTerms[_id].buyer].pop();
+            }
+
+            // Update buyer
+            portionTerms[_id].buyer = _buyer;
+            portionsByBuyer[_buyer].push(_id);
+            buyersByPortions[_id].push(_buyer);
+
+            // Update the support variable
+            portionBuyerIndexByPortion[_id] = portionsByBuyer[_buyer].length - 1;
+
+        } else {
+
+            if (portionsByOwner[portionTerms[_id].owner].length != 1 && portionOwnerIndexByPortion[_id] != portionsByOwner[portionTerms[_id].owner].length - 1) {
+                // The portion is removed from the old owner's array
+                portionsByOwner[portionTerms[_id].owner][portionOwnerIndexByPortion[_id]] = portionsByOwner[portionTerms[_id].owner][portionsByOwner[portionTerms[_id].owner].length - 1];
+            }
+            portionsByOwner[portionTerms[_id].owner].pop();
+
+            // Update owner
+            portionTerms[_id].owner = _buyer;
+            portionsByOwner[_buyer].push(_id);
+
+            // Update the support variable
+            portionOwnerIndexByPortion[_id] = portionsByOwner[_buyer].length - 1;
+        }      
     }
     
     /// @notice Sell and transfer ownership
     /// @param _id Portion ID
     /// @param _buyer New buyer
     function sell(uint256 _id, address _buyer) external onlyOwnerAndBuyer(_id) {
-        portionTerms[_id].buyer = _buyer;
-        portionsByBuyer[_buyer].push(_id);
-        
-        buyersByPortions[_id].push(_buyer);
+        this.sell(_id, _buyer, msg.sender);
     }
     
     /// @param _id Portion ID
