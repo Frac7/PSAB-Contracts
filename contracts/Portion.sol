@@ -77,7 +77,7 @@ contract Portion {
     
     /// @param _landId Land to be divided
     /// @param _description Portion description
-    function register(uint256 _landId, string calldata _description) public {
+    function register(uint256 _landId, string memory _description) public {
         portions[lastPortionId + 1].description = portions[lastPortionId].description = _description;
         portions[lastPortionId + 1].land = portions[lastPortionId].land = _landId;
         
@@ -89,7 +89,7 @@ contract Portion {
     /// @param _landId Land to be divided
     /// @param _description Portion description
     /// @param _source Original sender from divide land
-    function register(uint256 _landId, string calldata _description, address _source) public {
+    function register(uint256 _landId, string memory _description, address _source) public {
         if (portionsByLand[_landId].length == 2) revert ('Portion cannot be created');
 
         portionsByLand[_landId].push(lastPortionId);
